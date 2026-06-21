@@ -36,7 +36,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename="/raznorab">
         <Toaster position="top-right" richColors />
         <Routes>
           <Route path="/share/:token" element={<SharePage />} />
