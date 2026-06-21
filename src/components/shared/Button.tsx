@@ -8,10 +8,10 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-orange-500 hover:bg-orange-600 text-white',
-  secondary: 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-300',
-  danger: 'bg-red-500 hover:bg-red-600 text-white',
-  ghost: 'hover:bg-gray-100 text-gray-600',
+  primary: 'bg-orange-500 hover:bg-orange-400 text-white shadow-lg shadow-orange-500/20',
+  secondary: 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700',
+  danger: 'bg-red-600 hover:bg-red-500 text-white',
+  ghost: 'hover:bg-gray-800 text-gray-400 hover:text-gray-200',
 }
 
 const sizes = {
@@ -25,7 +25,7 @@ export function Button({ variant = 'primary', size = 'md', children, loading, cl
     <button
       {...props}
       disabled={disabled || loading}
-      className={`inline-flex items-center gap-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center gap-2 rounded-xl font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {loading && (
         <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

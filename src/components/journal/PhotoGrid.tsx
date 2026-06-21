@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Plus, X, ZoomIn } from 'lucide-react'
+import { toast } from 'sonner'
 import type { EntryPhoto } from '../../types'
 import { getPhotoUrl, useDeletePhoto, useUploadPhotos } from '../../hooks/usePhotos'
 
@@ -19,7 +20,10 @@ export function PhotoGrid({ entryId, photos, readonly = false }: Props) {
     if (!files || files.length === 0) return
     const remaining = 10 - photos.length
     const toUpload = Array.from(files).slice(0, remaining)
-    upload(toUpload)
+    upload(toUpload, {
+      onSuccess: () => toast.success(`${toUpload.length} фото загружено`),
+      onError: () => toast.error('Ошибка загрузки фото'),
+    })
   }
 
   return (
@@ -28,21 +32,24 @@ export function PhotoGrid({ entryId, photos, readonly = false }: Props) {
         {photos.map((p) => {
           const url = getPhotoUrl(p.storage_path)
           return (
-            <div key={p.id} className="relative group aspect-square rounded-lg overflow-hidden bg-gray-100">
+            <div key={p.id} className="relative group aspect-square rounded-xl overflow-hidden bg-gray-800">
               <img src={url} alt={p.caption ?? ''} className="w-full h-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-1">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center gap-1.5">
                 <button
                   onClick={() => setLightbox(url)}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 bg-white/90 rounded-lg transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-2 bg-white/10 backdrop-blur-sm rounded-lg transition-all hover:bg-white/20"
                 >
-                  <ZoomIn className="w-4 h-4 text-gray-700" />
+                  <ZoomIn className="w-4 h-4 text-white" />
                 </button>
                 {!readonly && (
                   <button
-                    onClick={() => deletePhoto({ photo: p })}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 bg-white/90 rounded-lg transition-all"
+                    onClick={() => {
+                      deletePhoto({ photo: p })
+                      toast.success('Фото удалено')
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-2 bg-white/10 backdrop-blur-sm rounded-lg transition-all hover:bg-red-500/40"
                   >
-                    <X className="w-4 h-4 text-red-500" />
+                    <X className="w-4 h-4 text-white" />
                   </button>
                 )}
               </div>
@@ -55,14 +62,14 @@ export function PhotoGrid({ entryId, photos, readonly = false }: Props) {
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 flex flex-col items-center justify-center gap-1 transition-colors disabled:opacity-50"
+            className="aspect-square rounded-xl border-2 border-dashed border-gray-700 hover:border-orange-500/50 hover:bg-orange-500/5 flex flex-col items-center justify-center gap-1.5 transition-all disabled:opacity-40"
           >
             {uploading ? (
               <span className="w-5 h-5 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <Plus className="w-5 h-5 text-gray-400" />
-                <span className="text-xs text-gray-400">Фото</span>
+                <Plus className="w-5 h-5 text-gray-600" />
+                <span className="text-xs text-gray-600">Фото</span>
               </>
             )}
           </button>
@@ -79,11 +86,11 @@ export function PhotoGrid({ entryId, photos, readonly = false }: Props) {
       />
 
       {lightbox && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
-          <button className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-lg" onClick={() => setLightbox(null)}>
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          <button className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" onClick={() => setLightbox(null)}>
             <X className="w-6 h-6" />
           </button>
-          <img src={lightbox} alt="" className="max-w-full max-h-full object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
+          <img src={lightbox} alt="" className="max-w-full max-h-full object-contain rounded-xl" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
     </>

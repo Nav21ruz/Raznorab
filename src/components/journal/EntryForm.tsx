@@ -65,41 +65,42 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
         <Input label="Температура (°C)" type="number" placeholder="—" {...register('temperature')} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Погода</label>
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-gray-400">Погода</label>
         <div className="flex flex-wrap gap-2">
           {Object.entries(WEATHER_LABELS).map(([key, label]) => (
             <label key={key} className="cursor-pointer">
               <input type="radio" value={key} {...register('weather')} className="sr-only peer" />
-              <span className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg peer-checked:border-orange-400 peer-checked:bg-orange-50 peer-checked:text-orange-700 hover:border-gray-300 transition-colors block">
+              <span className="px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-xl peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 hover:border-gray-600 transition-all block">
                 {label}
               </span>
             </label>
           ))}
         </div>
-        {errors.weather && <p className="text-xs text-red-500">{errors.weather.message}</p>}
+        {errors.weather && <p className="text-xs text-red-400">{errors.weather.message}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Выполненные работы *</label>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-400">Выполненные работы *</label>
         <textarea
           {...register('work_description')}
-          className={`px-3 py-2 border rounded-lg text-sm outline-none focus:border-orange-400 resize-none ${errors.work_description ? 'border-red-400' : 'border-gray-300'}`}
+          className={`px-3 py-2.5 bg-gray-900 border rounded-xl text-sm text-gray-100 outline-none focus:ring-1 resize-none placeholder:text-gray-600 transition-all
+            ${errors.work_description ? 'border-red-500 focus:border-red-400' : 'border-gray-700 focus:border-orange-500 focus:ring-orange-500/30'}`}
           rows={4}
           placeholder="Залита стяжка пола в комнате №1 и №2, площадь 28 м². Установлены маяки в коридоре..."
         />
-        {errors.work_description && <p className="text-xs text-red-500">{errors.work_description.message}</p>}
+        {errors.work_description && <p className="text-xs text-red-400">{errors.work_description.message}</p>}
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Рабочие</label>
+          <label className="text-sm font-medium text-gray-400">Рабочие</label>
           <Button type="button" variant="ghost" size="sm" onClick={() => append({ name: '', hours: 8 })}>
             <Plus className="w-4 h-4" /> Добавить
           </Button>
         </div>
         {fields.length === 0 && (
-          <p className="text-sm text-gray-400 italic">Нет рабочих — нажмите «Добавить»</p>
+          <p className="text-sm text-gray-600 italic">Нет рабочих — нажмите «Добавить»</p>
         )}
         {fields.map((field, i) => (
           <div key={field.id} className="flex gap-2 items-start">
@@ -109,24 +110,24 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
             <div className="w-24">
               <Input type="number" placeholder="Часы" min={1} max={24} error={errors.workers?.[i]?.hours?.message} {...register(`workers.${i}.hours`)} />
             </div>
-            <button type="button" onClick={() => remove(i)} className="mt-2 p-1.5 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors text-gray-400">
+            <button type="button" onClick={() => remove(i)} className="mt-2.5 p-2 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-colors text-gray-600">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Заметки (необязательно)</label>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-400">Заметки (необязательно)</label>
         <textarea
           {...register('notes')}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-orange-400 resize-none"
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
           rows={2}
           placeholder="Задержка из-за поставки материалов. Завтра — продолжение работ..."
         />
       </div>
 
-      <Button type="submit" loading={isSubmitting} className="w-full justify-center">
+      <Button type="submit" loading={isSubmitting} className="w-full justify-center" size="lg">
         {submitLabel}
       </Button>
     </form>

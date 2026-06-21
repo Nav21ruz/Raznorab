@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Plus, LogOut, HardHat } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { Plus, HardHat } from 'lucide-react'
 import { useObjects } from '../hooks/useObjects'
 import { useEntries } from '../hooks/useEntries'
 import { ObjectCard } from '../components/objects/ObjectCard'
@@ -8,46 +7,39 @@ import { ObjectForm } from '../components/objects/ObjectForm'
 import { Modal } from '../components/shared/Modal'
 import { Button } from '../components/shared/Button'
 import { Spinner } from '../components/shared/Spinner'
+import { Navbar } from '../components/shared/Navbar'
+import type { ConstructionObject } from '../types'
 
 export function ObjectsPage() {
   const [showForm, setShowForm] = useState(false)
   const { data: objects, isLoading } = useObjects()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-              <HardHat className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-gray-900">Журнал объекта</span>
+    <div className="min-h-screen bg-gray-950">
+      <Navbar />
+
+      <main className="max-w-3xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Мои объекты</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              {objects?.length ? `${objects.length} объект(ов) в работе` : 'Добавьте первый объект'}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={() => setShowForm(true)} size="sm">
-              <Plus className="w-4 h-4" /> Объект
-            </Button>
-            <button
-              onClick={() => supabase.auth.signOut()}
-              className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
-              title="Выйти"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4" /> Новый объект
+          </Button>
         </div>
-      </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Мои объекты</h1>
-
-        {isLoading && <Spinner className="mt-12" />}
+        {isLoading && <Spinner className="mt-16" />}
 
         {!isLoading && objects?.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
-            <HardHat className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-medium">Нет объектов</p>
-            <p className="text-sm mt-1">Нажмите «+ Объект» чтобы начать</p>
+          <div className="text-center py-24">
+            <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <HardHat className="w-8 h-8 text-gray-700" />
+            </div>
+            <p className="text-gray-400 font-medium">Нет объектов</p>
+            <p className="text-sm text-gray-600 mt-1">Нажмите «Новый объект» чтобы начать</p>
           </div>
         )}
 
@@ -65,7 +57,7 @@ export function ObjectsPage() {
   )
 }
 
-function ObjectCardWithStats({ object }: { object: import('../types').ConstructionObject }) {
+function ObjectCardWithStats({ object }: { object: ConstructionObject }) {
   const { data: entries } = useEntries(object.id)
   return (
     <ObjectCard

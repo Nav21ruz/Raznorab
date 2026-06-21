@@ -7,16 +7,16 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, Props>(({ label, error, className = '', ...props }, ref) => {
   return (
-    <div className="flex flex-col gap-1">
-      {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
+    <div className="flex flex-col gap-1.5">
+      {label && <label className="text-sm font-medium text-gray-400">{label}</label>}
       <input
         ref={ref}
         {...props}
-        className={`px-3 py-2 border rounded-lg text-sm outline-none transition-colors
-          ${error ? 'border-red-400 focus:border-red-500' : 'border-gray-300 focus:border-orange-400'}
-          disabled:bg-gray-50 disabled:text-gray-500 ${className}`}
+        className={`px-3 py-2.5 bg-gray-900 border rounded-xl text-sm text-gray-100 outline-none transition-all placeholder:text-gray-600
+          ${error ? 'border-red-500 focus:border-red-400' : 'border-gray-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30'}
+          disabled:opacity-50 ${className}`}
       />
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   )
 })
