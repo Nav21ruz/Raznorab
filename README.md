@@ -1,6 +1,17 @@
-# React + TypeScript + Vite
+# Разнораб
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Журнал стройобъекта: объекты, ежедневные записи, фото, PDF-отчёты, шаринг — плюс учёт расходов и выплат рабочим, в том числе через Telegram-бота.
+
+## Учёт расходов и смен
+
+- В карточке объекта появился блок «Финансы»: расходы (материалы/инструменты/транспорт/…) и смены рабочих с суммой, статусом оплаты и итогами.
+- Всё то же самое можно вести из Telegram: кнопками или обычным текстом («купил цемент 5 мешков за 4500») — сообщение разбирает Claude. См. [`bot/README.md`](./bot/README.md).
+- Перед использованием выполните обновлённый `supabase/schema.sql` в SQL Editor вашего проекта — он добавляет таблицы `expenses`, `shifts`, `telegram_links`, `telegram_link_codes` к уже существующим.
+- Чтобы привязать бота, зайдите в приложении в раздел «Telegram» и получите код; для кнопки мгновенного перехода в бота задайте `VITE_TELEGRAM_BOT_USERNAME` в `.env` (см. `.env.example`).
+
+## Стек
+
+React + TypeScript + Vite, Supabase (Postgres/Auth/Storage), деплой веб-части на GitHub Pages. Бот — отдельный Node.js-процесс (`bot/`) на Telegraf.
 
 Currently, two official plugins are available:
 

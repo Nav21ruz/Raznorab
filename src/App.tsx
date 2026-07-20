@@ -11,6 +11,7 @@ import { NewEntryPage } from './pages/NewEntryPage'
 import { EntryDetailPage } from './pages/EntryDetailPage'
 import { SharePage } from './pages/SharePage'
 import { StatsPage } from './pages/StatsPage'
+import { TelegramPage } from './pages/TelegramPage'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 30, retry: 1 } },
@@ -47,6 +48,7 @@ export default function App() {
               <Route path="/objects/:id/new-entry" element={<NewEntryPage />} />
               <Route path="/entries/:id" element={<EntryDetailPage />} />
               <Route path="/stats" element={<StatsPage />} />
+              <Route path="/telegram" element={<TelegramPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>
           ) : (

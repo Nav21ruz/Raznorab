@@ -7,6 +7,7 @@ import { useObject } from '../hooks/useObjects'
 import { useEntries } from '../hooks/useEntries'
 import { usePhotos } from '../hooks/usePhotos'
 import { EntryCard } from '../components/journal/EntryCard'
+import { FinancePanel } from '../components/finance/FinancePanel'
 import { Spinner } from '../components/shared/Spinner'
 import { Button } from '../components/shared/Button'
 import { PDFReport } from '../components/journal/PDFReport'
@@ -114,6 +115,11 @@ export function ObjectDetailPage() {
           {entries?.map((entry) => (
             <EntryCardWithStats key={entry.id} entry={entry} />
           ))}
+        </div>
+
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold text-gray-200 mb-5">Финансы</h2>
+          {id && <FinancePanel objectId={id} />}
         </div>
       </main>
 

@@ -1,0 +1,15 @@
+import 'dotenv/config'
+
+function required(name: string): string {
+  const value = process.env[name]
+  if (!value) throw new Error(`Missing required env var: ${name}`)
+  return value
+}
+
+export const env = {
+  TELEGRAM_BOT_TOKEN: required('TELEGRAM_BOT_TOKEN'),
+  SUPABASE_URL: required('SUPABASE_URL'),
+  SUPABASE_SERVICE_ROLE_KEY: required('SUPABASE_SERVICE_ROLE_KEY'),
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ?? '',
+  ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001',
+}

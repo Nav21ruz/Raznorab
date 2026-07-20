@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { HardHat, LayoutDashboard, BarChart2, LogOut, Bell } from 'lucide-react'
+import { HardHat, LayoutDashboard, BarChart2, LogOut, Bell, Send } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
@@ -29,6 +29,7 @@ export function Navbar() {
   const nav = [
     { to: '/', icon: LayoutDashboard, label: 'Объекты' },
     { to: '/stats', icon: BarChart2, label: 'Статистика' },
+    { to: '/telegram', icon: Send, label: 'Telegram' },
   ]
 
   return (
