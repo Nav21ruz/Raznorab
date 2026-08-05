@@ -1,0 +1,87 @@
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { toast } from 'sonner'
+import { Input } from '../shared/Input'
+import { Button } from '../shared/Button'
+import { PhotoPicker } from './PhotoPicker'
+import { useCreateOrder } from '../../hooks/useOrders'
+import { BUILDER_CATEGORIES } from '../../types/marketplace'
+
+const schema = z.object({
+  category: z.string().min(1, 'Выберите категорию'),
+  title: z.string().min(1, 'Введите название'),
+  description: z.string().min(1, 'Опишите задачу'),
+  budget_from: z.string().optional(),
+  budget_to: z.string().optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+})
+
+type FormData = z.infer<typeof schema>
+
+export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
+  const { mutateAsync, isPending } = useCreateOrder()
+  const [photos, setPhotos] = useState<string[]>([])
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) })
+
+  const onSubmit = async (data: FormData) => {
+    await mutateAsync({
+      category: data.category,
+      title: data.title,
+      description: data.description,
+      budget_from: data.budget_from ? Number(data.budget_from) : null,
+      budget_to: data.budget_to ? Number(data.budget_to) : null,
+      city: data.city || null,
+      address: data.address || null,
+      photos,
+    })
+    toast.success('Заказ опубликован')
+    onSuccess()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-400">Категория</label>
+        <select
+          {...register('category')}
+          defaultValue=""
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+        >
+          <option value="" disabled>Выберите категорию</option>
+          {BUILDER_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        {errors.category && <p className="text-xs text-red-400">{errors.category.message}</p>}
+      </div>
+
+      <Input label="Название заказа" placeholder="Укладка плитки в ванной" error={errors.title?.message} {...register('title')} />
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-400">Описание</label>
+        <textarea
+          {...register('description')}
+          rows={4}
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+          placeholder="Опишите объём работ, сроки, материалы"
+        />
+        {errors.description && <p className="text-xs text-red-400">{errors.description.message}</p>}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Бюджет от, ₽" type="number" min={0} {...register('budget_from')} />
+        <Input label="Бюджет до, ₽" type="number" min={0} {...register('budget_to')} />
+      </div>
+
+      <Input label="Город" placeholder="Москва" {...register('city')} />
+      <Input label="Адрес / район (необязательно)" placeholder="м. Тульская" {...register('address')} />
+
+      <PhotoPicker photos={photos} onChange={setPhotos} folder="orders" />
+
+      <Button type="submit" loading={isPending} className="w-full justify-center mt-2">
+        Опубликовать заказ
+      </Button>
+    </form>
+  )
+}

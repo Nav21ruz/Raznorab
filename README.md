@@ -1,73 +1,35 @@
-# React + TypeScript + Vite
+# Стройбиржа
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Telegram Mini App — биржа для стройки и разовых подработок.
 
-Currently, two official plugins are available:
+- **Заказчик ↔ Строитель** — как Тиндер: заказчик публикует заказ, строители свайпают ленту заказов (вправо — отклик, влево — пропуск). Заказчик просматривает отклики и подтверждает мэтч — открывается чат.
+- **Разнорабочие** — отдельный, более простой раздел: заказчик публикует разовую задачу, разнорабочие просто откликаются в ленте без свайпов, заказчик выбирает исполнителя.
+- Чат между мэтчами в реальном времени (Supabase Realtime).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Плюс отдельный, не связанный с биржей инструмент — **Журнал объекта** (`/journal`) для прораба: дневник строительного объекта с фото, статистикой и PDF-отчётами.
 
-## React Compiler
+## Стек
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React 19 + TypeScript + Vite + Tailwind CSS 4, React Router, TanStack Query, Supabase (Postgres + Auth + Storage + Realtime), framer-motion (свайп-механика), `@twa-dev/sdk` (Telegram Web App).
 
-## Expanding the ESLint configuration
+## Запуск
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Без переменных окружения (см. ниже) приложение автоматически работает в демо-режиме: данные хранятся только в localStorage браузера, без реального бэкенда — этого достаточно, чтобы открыть и попробовать все сценарии локально.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Подключение реального Supabase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Создайте проект на [supabase.com](https://supabase.com).
+2. Выполните `supabase/marketplace_schema.sql` в SQL Editor (создаёт таблицы биржи и разнорабочих, RLS-политики, realtime для чата). При необходимости также `supabase/schema.sql` (журнал объекта).
+3. Создайте публичный Storage-бакет `marketplace-photos` (для журнала — `entry-photos`).
+4. Скопируйте `.env.example` в `.env` и укажите `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`.
+
+Аутентификация в мини-аппе — анонимная сессия Supabase, привязанная к профилю по `telegram_id`. Для продакшена рекомендуется добавить серверную проверку Telegram `initData` (например, через Supabase Edge Function), чтобы исключить подмену telegram-профиля.
+
+## Подключение в Telegram
+
+Задайте URL мини-аппа в [@BotFather](https://t.me/BotFather) (`/newapp` или `/setmenubutton`). В браузере вне Telegram приложение тоже открывается — использует моковые данные вместо `window.Telegram.WebApp`.

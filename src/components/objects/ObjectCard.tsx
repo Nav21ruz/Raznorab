@@ -27,7 +27,7 @@ export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
 
   return (
     <Link
-      to={`/objects/${object.id}`}
+      to={`/journal/objects/${object.id}`}
       className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-orange-500/50 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
     >
       <div className="flex items-start justify-between gap-3">

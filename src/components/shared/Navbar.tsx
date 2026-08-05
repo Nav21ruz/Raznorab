@@ -27,14 +27,14 @@ export function Navbar() {
   }, [])
 
   const nav = [
-    { to: '/', icon: LayoutDashboard, label: 'Объекты' },
-    { to: '/stats', icon: BarChart2, label: 'Статистика' },
+    { to: '/journal', icon: LayoutDashboard, label: 'Объекты' },
+    { to: '/journal/stats', icon: BarChart2, label: 'Статистика' },
   ]
 
   return (
     <header className="bg-gray-950/80 backdrop-blur-md border-b border-gray-800/60 sticky top-0 z-20">
       <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5">
+        <Link to="/journal" className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
             <HardHat className="w-4 h-4 text-white" />
           </div>

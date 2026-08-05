@@ -14,7 +14,7 @@ export function EntryCard({ entry, workersCount = 0, photosCount = 0 }: Props) {
 
   return (
     <Link
-      to={`/entries/${entry.id}`}
+      to={`/journal/entries/${entry.id}`}
       className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-orange-500/40 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
     >
       <div className="flex items-start justify-between gap-3">
