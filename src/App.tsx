@@ -41,6 +41,10 @@ const AdminReportsPage = lazy(() => import('./pages/admin/AdminReportsPage').the
 const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then((m) => ({ default: m.AdminUsersPage })))
 const AdminWordsPage = lazy(() => import('./pages/admin/AdminWordsPage').then((m) => ({ default: m.AdminWordsPage })))
 
+// Юридические страницы (публичные, без входа — их нужно видеть до регистрации)
+const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicyPage').then((m) => ({ default: m.PrivacyPolicyPage })))
+const TermsPage = lazy(() => import('./pages/legal/TermsPage').then((m) => ({ default: m.TermsPage })))
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 30, retry: 1 } },
 })
@@ -86,6 +90,8 @@ export default function App() {
         <Suspense fallback={<div className="min-h-screen bg-gray-950 flex items-center justify-center"><Spinner /></div>}>
           <Routes>
             <Route path="/share/:token" element={<SharePage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
 
             <Route path="/journal" element={<JournalGate />}>
               <Route index element={<ObjectsPage />} />

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -98,6 +98,12 @@ export function ProfilePage() {
           <LogOut className="w-4 h-4" /> Выйти из аккаунта
         </button>
       )}
+
+      <p className="text-xs text-gray-700 text-center mt-6">
+        <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
+        {' · '}
+        <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
+      </p>
     </div>
   )
 }

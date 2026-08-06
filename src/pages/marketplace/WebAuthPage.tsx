@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
+import { Link } from 'react-router-dom'
 import { HardHat, Info } from 'lucide-react'
 import { api, isMockBackend } from '../../lib/api'
 import { Input } from '../../components/shared/Input'
@@ -17,11 +18,16 @@ type FormData = z.infer<typeof schema>
 
 export function WebAuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [agreed, setAgreed] = useState(false)
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
   const onSubmit = async (data: FormData) => {
+    if (mode === 'register' && !agreed) {
+      toast.error('Нужно принять условия использования и политику конфиденциальности')
+      return
+    }
     const email = data.email.trim()
     try {
       if (mode === 'login') {
@@ -80,6 +86,23 @@ export function WebAuthPage() {
               error={errors.password?.message}
               {...register('password')}
             />
+            {mode === 'register' && (
+              <label className="flex items-start gap-2.5 text-xs text-gray-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 shrink-0 rounded border-gray-700 bg-gray-800 accent-orange-500"
+                />
+                <span>
+                  Я принимаю{' '}
+                  <Link to="/terms" target="_blank" className="text-orange-400 hover:underline">Пользовательское соглашение</Link>
+                  {' '}и{' '}
+                  <Link to="/privacy" target="_blank" className="text-orange-400 hover:underline">Политику конфиденциальности</Link>
+                </span>
+              </label>
+            )}
+
             <Button type="submit" loading={isSubmitting} className="w-full justify-center mt-2" size="lg">
               {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
             </Button>
@@ -88,6 +111,11 @@ export function WebAuthPage() {
 
         <p className="text-xs text-gray-600 text-center mt-6">
           Открыв приложение внутри Telegram, входить не нужно — вход произойдёт автоматически.
+        </p>
+        <p className="text-xs text-gray-700 text-center mt-2">
+          <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
+          {' · '}
+          <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
         </p>
       </div>
     </div>
