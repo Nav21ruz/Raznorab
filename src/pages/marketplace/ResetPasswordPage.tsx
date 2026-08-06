@@ -58,7 +58,7 @@ export function ResetPasswordPage() {
           ) : done ? (
             <div className="text-center py-2">
               <p className="text-sm text-gray-300">Пароль изменён. Теперь можно войти с новым паролем.</p>
-              <Button type="button" onClick={() => navigate('/', { replace: true })} className="w-full justify-center mt-5">
+              <Button type="button" onClick={() => navigate('/auth', { replace: true })} className="w-full justify-center mt-5">
                 Войти
               </Button>
             </div>

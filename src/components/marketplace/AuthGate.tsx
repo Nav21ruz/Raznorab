@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/useSession'
-import { WebAuthPage } from '../../pages/marketplace/WebAuthPage'
+import { LandingPage } from '../../pages/marketplace/LandingPage'
 import { Spinner } from '../shared/Spinner'
 
 export function AuthGate() {
   const session = useSession()
+  const location = useLocation()
   const queryClient = useQueryClient()
   // запоминаем, чей это был профиль, чтобы при смене пользователя (выход/вход под другим
   // аккаунтом) сбросить кэш — иначе useMyProfile (staleTime: Infinity) продолжит отдавать
@@ -29,6 +30,12 @@ export function AuthGate() {
       </div>
     )
   }
-  if (session === null) return <WebAuthPage />
+  if (session === null) {
+    // "/" — публичная страница-визитка для тех, кто ещё не заходил на сайт;
+    // любой другой защищённый адрес (прямая ссылка на /orders и т.п.) ведёт сразу
+    // на форму входа — не показывать же рекламный текст в ответ на закладку в браузере.
+    if (location.pathname === '/') return <LandingPage />
+    return <Navigate to="/auth" replace />
+  }
   return <Outlet />
 }

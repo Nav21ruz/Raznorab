@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { HardHat, Info } from 'lucide-react'
 import { api, isMockBackend, yandexLoginAvailable } from '../../lib/api'
+import { useSession } from '../../hooks/useSession'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
+import { Spinner } from '../../components/shared/Spinner'
 
 const schema = z.object({
   email: z.string().email('Введите корректный email'),
@@ -23,7 +25,11 @@ const forgotSchema = z.object({
 type ForgotFormData = z.infer<typeof forgotSchema>
 
 export function WebAuthPage() {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const session = useSession()
+  const initialMode = (location.state as { mode?: 'login' | 'register' } | null)?.mode ?? 'login'
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode)
   const [agreed, setAgreed] = useState(false)
   const [forgotSent, setForgotSent] = useState(false)
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -34,6 +40,12 @@ export function WebAuthPage() {
     handleSubmit: handleSubmitForgot,
     formState: { errors: forgotErrors, isSubmitting: forgotSubmitting },
   } = useForm<ForgotFormData>({ resolver: zodResolver(forgotSchema) })
+
+  // Кто-то уже вошедший открыл /auth напрямую (например, старая вкладка) — уводим
+  // обратно в приложение, а не показываем форму входа поверх активной сессии
+  useEffect(() => {
+    if (session) navigate('/', { replace: true })
+  }, [session, navigate])
 
   const onSubmit = async (data: FormData) => {
     if (mode === 'register' && !agreed) {
@@ -47,6 +59,9 @@ export function WebAuthPage() {
       } else {
         await api.auth.register(email, data.password)
       }
+      // Форма живёт на отдельном публичном маршруте /auth — после входа явно
+      // уходим на "/", дальше уже AuthGate решает, куда вести дальше
+      navigate('/', { replace: true })
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Не удалось выполнить вход')
     }
@@ -59,6 +74,16 @@ export function WebAuthPage() {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Не удалось отправить письмо')
     }
+  }
+
+  // Пока не знаем, есть ли уже активная сессия (или знаем, что есть, и вот-вот
+  // уйдём на "/") — не мелькаем формой входа зря
+  if (session === undefined || session) {
+    return (
+      <div className="min-h-dvh bg-gray-950 flex items-center justify-center">
+        <Spinner />
+      </div>
+    )
   }
 
   if (mode === 'forgot') {
@@ -104,13 +129,13 @@ export function WebAuthPage() {
   return (
     <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center gap-3 mb-8">
+        <Link to="/" className="flex flex-col items-center gap-3 mb-8">
           <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
             <HardHat className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Стройбиржа</h1>
           <p className="text-sm text-gray-500 text-center">Заказы на стройку и разовые подработки</p>
-        </div>
+        </Link>
 
         {isMockBackend && (
           <div className="flex items-start gap-2.5 p-3 mb-5 bg-orange-500/10 border border-orange-500/20 rounded-xl text-xs text-orange-300">
