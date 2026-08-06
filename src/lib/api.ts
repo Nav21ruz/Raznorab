@@ -7,6 +7,7 @@ import type {
   LaborResponse,
   LaborTask,
   Message,
+  NotificationsSummary,
   Order,
   OrderFeedFilters,
   OrderSwipe,
@@ -292,6 +293,9 @@ const realApi = {
       const r = await request<{ responses: { response: LaborResponse; profile: Profile }[] }>(`/labor-tasks/${taskId}/responses`)
       return r.responses
     },
+    async markResponsesSeen(taskId: string) {
+      await request(`/labor-tasks/${taskId}/responses/seen`, { method: 'PATCH' })
+    },
     async accept(taskId: string, laborerId: string) {
       const r = await request<{ conversation: Conversation }>(`/labor-tasks/${taskId}/accept`, {
         method: 'POST',
@@ -322,9 +326,12 @@ const realApi = {
   conversations: {
     async list() {
       const r = await request<{
-        conversations: (Conversation & { peerName: string; peerPhoto: string | null; contextTitle: string; lastMessage?: string; lastMessageAt?: string })[]
+        conversations: (Conversation & { peerName: string; peerPhoto: string | null; contextTitle: string; lastMessage?: string; lastMessageAt?: string; unreadCount: number })[]
       }>('/conversations')
       return r.conversations
+    },
+    async markRead(id: string) {
+      await request(`/conversations/${id}/read`, { method: 'POST' })
     },
     async get(id: string) {
       const r = await request<{ conversation: Conversation }>(`/conversations/${id}`)
@@ -359,6 +366,12 @@ const realApi = {
       return request<{ reviews: (Review & { reviewerName: string; reviewerPhoto: string | null })[]; average: number | null; count: number }>(
         `/profiles/${profileId}/reviews`
       )
+    },
+  },
+
+  notifications: {
+    async summary() {
+      return request<NotificationsSummary>('/notifications/summary')
     },
   },
 

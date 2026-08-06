@@ -42,3 +42,14 @@ export function useSendMessage(conversationId: string) {
     },
   })
 }
+
+export function useMarkConversationRead(conversationId: string | undefined) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.conversations.markRead(conversationId as string),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['conversations'] })
+      qc.invalidateQueries({ queryKey: ['notifications'] })
+    },
+  })
+}

@@ -93,6 +93,16 @@ laborTasksRouter.get('/:id/responses', asyncRoute(async (req, res) => {
   res.json({ responses: rows.map((row) => ({ response: row.response, profile: row.profile })) })
 }))
 
+// Отмечает отклики просмотренными — вызывается, когда заказчик открывает список
+// откликов на свою задачу. RLS-политика ограничивает это своим же заказчиком:
+// вызов от кого угодно ещё просто не изменит ни одной строки.
+laborTasksRouter.patch('/:id/responses/seen', asyncRoute(async (req, res) => {
+  await withUserContext(req.userId, (c) =>
+    c.query(`update labor_responses set seen_by_customer = true where task_id = $1`, [req.params.id])
+  )
+  res.status(204).end()
+}))
+
 laborTasksRouter.post('/:id/accept', asyncRoute(async (req, res) => {
   const laborerId = req.body?.laborer_id
   if (!laborerId) throw new ApiError(400, 'Не указан разнорабочий')

@@ -6,6 +6,7 @@ import { profilesRouter, builderProfilesRouter } from './routes/profiles.js'
 import { ordersRouter, orderSwipesRouter } from './routes/orders.js'
 import { laborTasksRouter, laborResponsesRouter } from './routes/labor.js'
 import { conversationsRouter } from './routes/conversations.js'
+import { notificationsRouter } from './routes/notifications.js'
 import { reportsRouter } from './routes/reports.js'
 import { adminRouter, bannedWordsPublicRouter, moderationRouter } from './routes/admin.js'
 import { uploadsRouter } from './routes/uploads.js'
@@ -25,6 +26,7 @@ app.use('/order-swipes', orderSwipesRouter)
 app.use('/labor-tasks', laborTasksRouter)
 app.use('/labor-responses', laborResponsesRouter)
 app.use('/conversations', conversationsRouter)
+app.use('/notifications', notificationsRouter)
 app.use('/reports', reportsRouter)
 app.use('/admin', adminRouter)
 app.use('/banned-words', bannedWordsPublicRouter)

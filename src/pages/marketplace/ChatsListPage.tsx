@@ -42,15 +42,24 @@ export function ChatsListPage() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold text-white truncate">{c.peerName}</p>
+                <p className={`truncate ${c.unreadCount > 0 ? 'font-bold text-white' : 'font-semibold text-white'}`}>{c.peerName}</p>
                 {c.lastMessageAt && (
                   <span className="text-xs text-gray-600 shrink-0">
                     {formatDistanceToNow(new Date(c.lastMessageAt), { addSuffix: true, locale: ru })}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 truncate">{c.contextTitle}</p>
-              {c.lastMessage && <p className="text-sm text-gray-400 truncate mt-0.5">{c.lastMessage}</p>}
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs text-gray-500 truncate">{c.contextTitle}</p>
+                  {c.lastMessage && <p className={`text-sm truncate mt-0.5 ${c.unreadCount > 0 ? 'text-gray-200' : 'text-gray-400'}`}>{c.lastMessage}</p>}
+                </div>
+                {c.unreadCount > 0 && (
+                  <span className="shrink-0 min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center">
+                    {c.unreadCount > 9 ? '9+' : c.unreadCount}
+                  </span>
+                )}
+              </div>
             </div>
           </button>
         ))}

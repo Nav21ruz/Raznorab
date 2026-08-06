@@ -65,6 +65,14 @@ export function useTaskResponses(taskId: string | undefined) {
   })
 }
 
+export function useMarkLaborResponsesSeen() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (taskId: string) => api.laborTasks.markResponsesSeen(taskId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
+  })
+}
+
 export function useRespondToLaborTask() {
   const qc = useQueryClient()
   return useMutation({

@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ArrowLeft, MapPin, Wallet, Calendar, User, Flag } from 'lucide-react'
 import { Button } from '../../components/shared/Button'
 import { Spinner } from '../../components/shared/Spinner'
 import { ReportModal } from '../../components/marketplace/ReportModal'
-import { useLaborTask, useMyLaborResponse, useRespondToLaborTask, useTaskResponses, useAcceptLaborResponse } from '../../hooks/useLabor'
+import { useLaborTask, useMyLaborResponse, useRespondToLaborTask, useTaskResponses, useAcceptLaborResponse, useMarkLaborResponsesSeen } from '../../hooks/useLabor'
 import { useMyConversations } from '../../hooks/useConversations'
 import { PAY_TYPE_LABELS, type Profile } from '../../types/marketplace'
 
@@ -117,6 +117,13 @@ function OwnerResponses({ taskId, taskStatus, customerId }: { taskId: string; ta
   const { data: responses, isLoading } = useTaskResponses(taskId)
   const { data: conversations } = useMyConversations(customerId)
   const accept = useAcceptLaborResponse()
+  const markSeen = useMarkLaborResponsesSeen()
+  const markSeenMutate = markSeen.mutate
+
+  // Заказчик открыл список откликов — значит увидел их, снимаем значок "новое"
+  useEffect(() => {
+    markSeenMutate(taskId)
+  }, [taskId, markSeenMutate])
 
   const conversationByLaborer = new Map(
     (conversations ?? []).filter((c) => c.labor_task_id === taskId).map((c) => [c.worker_id, c]),

@@ -130,6 +130,12 @@ export const BUILDER_CATEGORIES = [
   'Другое',
 ] as const
 
+export interface NotificationsSummary {
+  unreadMessages: number
+  pendingCandidates: number
+  newLaborResponses: number
+}
+
 export interface OrderFeedFilters {
   category?: string
   city?: string

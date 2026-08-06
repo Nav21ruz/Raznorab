@@ -17,12 +17,19 @@ conversationsRouter.get('/', asyncRoute(async (req, res) => {
          o.title as order_title,
          t.title as labor_title,
          lm.text as last_message_text,
-         lm.created_at as last_message_at
+         lm.created_at as last_message_at,
+         (
+           select count(*) from messages m
+           where m.conversation_id = conv.id
+             and m.sender_id <> $1
+             and m.created_at > coalesce(cr.last_read_at, conv.created_at)
+         ) as unread_count
        from conversations conv
        join profiles peer on peer.id = (case when conv.customer_id = $1 then conv.worker_id else conv.customer_id end)
        left join orders o on o.id = conv.order_id
        left join labor_tasks t on t.id = conv.labor_task_id
        left join conversation_last_messages lm on lm.conversation_id = conv.id
+       left join conversation_reads cr on cr.conversation_id = conv.id and cr.profile_id = $1
        where conv.customer_id = $1 or conv.worker_id = $1
        order by coalesce(lm.created_at, conv.created_at) desc`,
       [req.userId]
@@ -36,6 +43,7 @@ conversationsRouter.get('/', asyncRoute(async (req, res) => {
       contextTitle: r.conversation.kind === 'order' ? (r.order_title ?? '—') : (r.labor_title ?? '—'),
       lastMessage: r.last_message_text ?? undefined,
       lastMessageAt: r.last_message_at ?? undefined,
+      unreadCount: Number(r.unread_count),
     })),
   })
 }))
@@ -58,6 +66,21 @@ conversationsRouter.get('/:id/messages', asyncRoute(async (req, res) => {
     )
   )
   res.json({ messages: rows })
+}))
+
+// Отмечает переписку прочитанной до текущего момента — вызывается при открытии
+// чата и периодически, пока он открыт (чтобы сообщения, пришедшие во время
+// просмотра, тоже не считались непрочитанными).
+conversationsRouter.post('/:id/read', asyncRoute(async (req, res) => {
+  await withUserContext(req.userId, (c) =>
+    c.query(
+      `insert into conversation_reads(conversation_id, profile_id, last_read_at)
+       values ($1, $2, now())
+       on conflict (conversation_id, profile_id) do update set last_read_at = now()`,
+      [req.params.id, req.userId]
+    )
+  )
+  res.status(204).end()
 }))
 
 conversationsRouter.post('/:id/messages', asyncRoute(async (req, res) => {

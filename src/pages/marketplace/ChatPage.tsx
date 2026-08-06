@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { Send, ArrowLeft, User, Flag, Star } from 'lucide-react'
 import { toast } from 'sonner'
-import { useConversation, useMessages, useSendMessage } from '../../hooks/useConversations'
+import { useConversation, useMarkConversationRead, useMessages, useSendMessage } from '../../hooks/useConversations'
 import { useProfileById } from '../../hooks/useProfile'
 import { useOrder } from '../../hooks/useOrders'
 import { useLaborTask } from '../../hooks/useLabor'
@@ -21,6 +21,7 @@ export function ChatPage() {
   const { data: conversation } = useConversation(id)
   const { data: messages, isLoading } = useMessages(id)
   const sendMessage = useSendMessage(id ?? '')
+  const markRead = useMarkConversationRead(id)
   const { data: bannedWords } = useBannedWords()
   const [text, setText] = useState('')
   const [showReport, setShowReport] = useState(false)
@@ -32,6 +33,14 @@ export function ChatPage() {
   const { data: myReview, isLoading: myReviewLoading } = useMyReview(id)
   const { data: order } = useOrder(conversation?.kind === 'order' ? conversation.order_id ?? undefined : undefined)
   const { data: laborTask } = useLaborTask(conversation?.kind === 'labor' ? conversation.labor_task_id ?? undefined : undefined)
+
+  // Отмечаем чат прочитанным при открытии и повторно при каждом новом сообщении,
+  // пришедшем во время просмотра (иначе оно бы всё равно засчиталось непрочитанным).
+  const markReadMutate = markRead.mutate
+  useEffect(() => {
+    if (!id) return
+    markReadMutate()
+  }, [id, messages?.length, markReadMutate])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

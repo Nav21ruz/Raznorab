@@ -18,6 +18,7 @@ import type {
   LaborResponse,
   LaborTask,
   Message,
+  NotificationsSummary,
   Order,
   OrderFeedFilters,
   OrderSwipe,
@@ -48,6 +49,8 @@ interface Store {
   banned_words: BannedWord[]
   admins: string[]
   reviews: Review[]
+  conversation_reads: { conversation_id: string; profile_id: string; last_read_at: string }[]
+  seen_labor_response_ids: string[]
 }
 
 function seedStore(): Store {
@@ -80,13 +83,22 @@ function seedStore(): Store {
     banned_words: [],
     admins: [],
     reviews: [],
+    conversation_reads: [],
+    seen_labor_response_ids: [],
   }
 }
 
 function load(): Store {
   try {
     const raw = localStorage.getItem(DB_KEY)
-    if (raw) return JSON.parse(raw) as Store
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<Store>
+      // Дополняем поля, которых не было в более старой версии демо-хранилища
+      // в браузере пользователя — иначе на них упадёт обращение ниже.
+      parsed.conversation_reads ??= []
+      parsed.seen_labor_response_ids ??= []
+      return parsed as Store
+    }
   } catch { /* повреждённое хранилище — пересоздаём ниже */ }
   const seeded = seedStore()
   try { localStorage.setItem(DB_KEY, JSON.stringify(seeded)) } catch { /* квота хранилища */ }
@@ -373,6 +385,11 @@ export const mockApi = {
         .sort((a, b) => a.created_at.localeCompare(b.created_at))
         .map((response) => ({ response, profile: findProfile(response.laborer_id) }))
     },
+    async markResponsesSeen(taskId: string) {
+      const ids = db.labor_responses.filter((r) => r.task_id === taskId).map((r) => r.id)
+      db.seen_labor_response_ids = [...new Set([...db.seen_labor_response_ids, ...ids])]
+      persist()
+    },
     async accept(taskId: string, laborerId: string) {
       const uid = requireSession()
       const conversation: Conversation = { id: randomId(), kind: 'labor', order_id: null, labor_task_id: taskId, customer_id: uid, worker_id: laborerId, created_at: new Date().toISOString() }
@@ -419,6 +436,9 @@ export const mockApi = {
           const lastMsg = db.messages
             .filter((m) => m.conversation_id === c.id)
             .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
+          const readRow = db.conversation_reads.find((r) => r.conversation_id === c.id && r.profile_id === uid)
+          const lastReadAt = readRow?.last_read_at ?? c.created_at
+          const unreadCount = db.messages.filter((m) => m.conversation_id === c.id && m.sender_id !== uid && m.created_at > lastReadAt).length
           return {
             ...c,
             peerName: peer ? `${peer.first_name} ${peer.last_name ?? ''}`.trim() : 'Пользователь',
@@ -426,9 +446,18 @@ export const mockApi = {
             contextTitle,
             lastMessage: lastMsg?.text,
             lastMessageAt: lastMsg?.created_at,
+            unreadCount,
           }
         })
         .sort((a, b) => (b.lastMessageAt ?? b.created_at).localeCompare(a.lastMessageAt ?? a.created_at))
+    },
+    async markRead(id: string) {
+      const uid = requireSession()
+      const now = new Date().toISOString()
+      const existing = db.conversation_reads.find((r) => r.conversation_id === id && r.profile_id === uid)
+      if (existing) existing.last_read_at = now
+      else db.conversation_reads.push({ conversation_id: id, profile_id: uid, last_read_at: now })
+      persist()
     },
     async get(id: string) {
       const c = db.conversations.find((row) => row.id === id)
@@ -475,6 +504,26 @@ export const mockApi = {
         average,
         count: mine.length,
       }
+    },
+  },
+
+  notifications: {
+    async summary(): Promise<NotificationsSummary> {
+      const uid = requireSession()
+      const myConversations = db.conversations.filter((c) => c.customer_id === uid || c.worker_id === uid)
+      const unreadMessages = myConversations.reduce((sum, c) => {
+        const readRow = db.conversation_reads.find((r) => r.conversation_id === c.id && r.profile_id === uid)
+        const lastReadAt = readRow?.last_read_at ?? c.created_at
+        return sum + db.messages.filter((m) => m.conversation_id === c.id && m.sender_id !== uid && m.created_at > lastReadAt).length
+      }, 0)
+
+      const myOrderIds = new Set(db.orders.filter((o) => o.customer_id === uid).map((o) => o.id))
+      const pendingCandidates = db.order_swipes.filter((s) => myOrderIds.has(s.order_id) && s.direction === 'like' && !s.reviewed_by_customer).length
+
+      const myTaskIds = new Set(db.labor_tasks.filter((t) => t.customer_id === uid).map((t) => t.id))
+      const newLaborResponses = db.labor_responses.filter((r) => myTaskIds.has(r.task_id) && !db.seen_labor_response_ids.includes(r.id)).length
+
+      return { unreadMessages, pendingCandidates, newLaborResponses }
     },
   },
 

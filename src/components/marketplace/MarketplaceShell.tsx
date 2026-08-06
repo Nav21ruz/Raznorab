@@ -2,12 +2,14 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { ShieldOff } from 'lucide-react'
 import { useMyProfile } from '../../hooks/useProfile'
 import { useMyBanStatus } from '../../hooks/useModeration'
+import { useNotificationsSummary } from '../../hooks/useNotifications'
 import { BottomNav } from './BottomNav'
 import { Spinner } from '../shared/Spinner'
 
 export function MarketplaceShell({ nav = true }: { nav?: boolean }) {
   const { data: profile, isLoading, isError } = useMyProfile()
   const { data: ban, isLoading: banLoading } = useMyBanStatus(profile?.id)
+  const { data: notifications } = useNotificationsSummary(profile?.id)
 
   if (isLoading || banLoading) {
     return (
@@ -46,7 +48,7 @@ export function MarketplaceShell({ nav = true }: { nav?: boolean }) {
   return (
     <div className={`min-h-screen bg-gray-950 ${nav ? 'pb-24' : ''}`}>
       <Outlet context={{ profile }} />
-      {nav && <BottomNav role={profile.role} />}
+      {nav && <BottomNav role={profile.role} counts={notifications} />}
     </div>
   )
 }
