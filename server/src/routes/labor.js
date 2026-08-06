@@ -7,10 +7,35 @@ export const laborTasksRouter = Router()
 laborTasksRouter.use(requireAuth)
 
 const TASK_FIELDS = ['title', 'description', 'city', 'pay_amount', 'pay_type', 'date_needed']
+const PAY_TYPES = ['per_task', 'per_day', 'per_hour']
 
+// Необязательные фильтры из строки запроса — см. такой же приём в orders.js/feed.
 laborTasksRouter.get('/feed', asyncRoute(async (req, res) => {
+  const conditions = [`status = 'active'`]
+  const params = []
+
+  const { city, search, payType } = req.query
+  const payMin = Number(req.query.payMin)
+
+  if (typeof city === 'string' && city.trim()) {
+    params.push(`%${city.trim()}%`)
+    conditions.push(`city ilike $${params.length}`)
+  }
+  if (typeof search === 'string' && search.trim()) {
+    params.push(`%${search.trim()}%`)
+    conditions.push(`(title ilike $${params.length} or description ilike $${params.length})`)
+  }
+  if (typeof payType === 'string' && PAY_TYPES.includes(payType)) {
+    params.push(payType)
+    conditions.push(`pay_type = $${params.length}`)
+  }
+  if (Number.isFinite(payMin)) {
+    params.push(payMin)
+    conditions.push(`(pay_amount is null or pay_amount >= $${params.length})`)
+  }
+
   const { rows } = await withUserContext(req.userId, (c) =>
-    c.query(`select * from labor_tasks where status = 'active' order by created_at desc limit 100`)
+    c.query(`select * from labor_tasks where ${conditions.join(' and ')} order by created_at desc limit 100`, params)
   )
   res.json({ tasks: rows })
 }))

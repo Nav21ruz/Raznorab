@@ -3,10 +3,12 @@ import type {
   BannedWord,
   BuilderProfile,
   Conversation,
+  LaborFeedFilters,
   LaborResponse,
   LaborTask,
   Message,
   Order,
+  OrderFeedFilters,
   OrderSwipe,
   Profile,
   Report,
@@ -90,6 +92,18 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new ApiRequestError(data.error || 'Ошибка сервера', res.status)
   return data as T
+}
+
+/** Собирает "?a=1&b=2" из объекта фильтров, пропуская пустые/неопределённые поля. */
+function buildQuery(filters?: object): string {
+  if (!filters) return ''
+  const params = new URLSearchParams()
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === undefined || value === '') continue
+    params.set(key, String(value))
+  }
+  const qs = params.toString()
+  return qs ? `?${qs}` : ''
 }
 
 const realApi = {
@@ -200,8 +214,9 @@ const realApi = {
   },
 
   orders: {
-    async feed() {
-      const r = await request<{ orders: Order[] }>('/orders/feed')
+    async feed(filters?: OrderFeedFilters) {
+      const qs = buildQuery(filters)
+      const r = await request<{ orders: Order[] }>(`/orders/feed${qs}`)
       return r.orders
     },
     async mine() {
@@ -253,8 +268,9 @@ const realApi = {
   },
 
   laborTasks: {
-    async feed() {
-      const r = await request<{ tasks: LaborTask[] }>('/labor-tasks/feed')
+    async feed(filters?: LaborFeedFilters) {
+      const qs = buildQuery(filters)
+      const r = await request<{ tasks: LaborTask[] }>(`/labor-tasks/feed${qs}`)
       return r.tasks
     },
     async mine() {

@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { Order, OrderStatus } from '../types/marketplace'
+import type { Order, OrderFeedFilters, OrderStatus } from '../types/marketplace'
 
-export function useOrdersFeed(builderId: string | undefined) {
+export function useOrdersFeed(builderId: string | undefined, filters?: OrderFeedFilters) {
   return useQuery({
-    queryKey: ['orders', 'feed', builderId],
-    queryFn: () => api.orders.feed(),
+    queryKey: ['orders', 'feed', builderId, filters],
+    queryFn: () => api.orders.feed(filters),
     enabled: !!builderId,
   })
 }

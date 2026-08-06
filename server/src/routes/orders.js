@@ -10,16 +10,47 @@ const ORDER_FIELDS = ['category', 'title', 'description', 'budget_from', 'budget
 
 // Лента для строителя: активные заказы, не свои и ещё не свайпнутые — раньше это
 // выкачивалось целиком на клиент и фильтровалось в браузере, теперь считает сама база.
+// Необязательные фильтры из строки запроса — все параметры подставляются через $N,
+// ни один кусок пользовательского текста не попадает в SQL напрямую.
 ordersRouter.get('/feed', asyncRoute(async (req, res) => {
+  const conditions = [
+    `o.status = 'active'`,
+    `o.customer_id <> $1`,
+    `not exists (select 1 from order_swipes s where s.order_id = o.id and s.builder_id = $1)`,
+  ]
+  const params = [req.userId]
+
+  const { category, city, search } = req.query
+  const budgetMin = Number(req.query.budgetMin)
+  const budgetMax = Number(req.query.budgetMax)
+
+  if (typeof category === 'string' && category.trim()) {
+    params.push(category.trim())
+    conditions.push(`o.category = $${params.length}`)
+  }
+  if (typeof city === 'string' && city.trim()) {
+    params.push(`%${city.trim()}%`)
+    conditions.push(`o.city ilike $${params.length}`)
+  }
+  if (typeof search === 'string' && search.trim()) {
+    params.push(`%${search.trim()}%`)
+    conditions.push(`(o.title ilike $${params.length} or o.description ilike $${params.length})`)
+  }
+  // Пересечение диапазонов: заказ подходит, если его вилка бюджета пересекается
+  // с той, что задал строитель (а не только если совпадает в точности)
+  if (Number.isFinite(budgetMin)) {
+    params.push(budgetMin)
+    conditions.push(`(o.budget_to is null or o.budget_to >= $${params.length})`)
+  }
+  if (Number.isFinite(budgetMax)) {
+    params.push(budgetMax)
+    conditions.push(`(o.budget_from is null or o.budget_from <= $${params.length})`)
+  }
+
   const { rows } = await withUserContext(req.userId, (c) =>
     c.query(
-      `select o.* from orders o
-       where o.status = 'active'
-         and o.customer_id <> $1
-         and not exists (select 1 from order_swipes s where s.order_id = o.id and s.builder_id = $1)
-       order by o.created_at desc
-       limit 100`,
-      [req.userId]
+      `select o.* from orders o where ${conditions.join(' and ')} order by o.created_at desc limit 100`,
+      params
     )
   )
   res.json({ orders: rows })

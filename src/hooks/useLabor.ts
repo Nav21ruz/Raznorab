@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { Conversation, LaborTask } from '../types/marketplace'
+import type { Conversation, LaborFeedFilters, LaborTask } from '../types/marketplace'
 
-export function useLaborFeed() {
+export function useLaborFeed(filters?: LaborFeedFilters) {
   return useQuery({
-    queryKey: ['labor_tasks', 'feed'],
-    queryFn: () => api.laborTasks.feed(),
+    queryKey: ['labor_tasks', 'feed', filters],
+    queryFn: () => api.laborTasks.feed(filters),
   })
 }
 

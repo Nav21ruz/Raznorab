@@ -130,6 +130,21 @@ export const BUILDER_CATEGORIES = [
   'Другое',
 ] as const
 
+export interface OrderFeedFilters {
+  category?: string
+  city?: string
+  search?: string
+  budgetMin?: number
+  budgetMax?: number
+}
+
+export interface LaborFeedFilters {
+  city?: string
+  search?: string
+  payType?: PayType
+  payMin?: number
+}
+
 export const PAY_TYPE_LABELS: Record<PayType, string> = {
   per_task: 'за задачу',
   per_day: 'за день',

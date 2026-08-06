@@ -14,10 +14,12 @@ import type {
   BannedWord,
   BuilderProfile,
   Conversation,
+  LaborFeedFilters,
   LaborResponse,
   LaborTask,
   Message,
   Order,
+  OrderFeedFilters,
   OrderSwipe,
   Profile,
   Report,
@@ -255,11 +257,17 @@ export const mockApi = {
   },
 
   orders: {
-    async feed() {
+    async feed(filters?: OrderFeedFilters) {
       const uid = requireSession()
       const swiped = new Set(db.order_swipes.filter((s) => s.builder_id === uid).map((s) => s.order_id))
+      const search = filters?.search?.trim().toLowerCase()
       return db.orders
         .filter((o) => o.status === 'active' && o.customer_id !== uid && !swiped.has(o.id))
+        .filter((o) => !filters?.category || o.category === filters.category)
+        .filter((o) => !filters?.city || (o.city ?? '').toLowerCase().includes(filters.city.trim().toLowerCase()))
+        .filter((o) => !search || o.title.toLowerCase().includes(search) || o.description.toLowerCase().includes(search))
+        .filter((o) => filters?.budgetMin === undefined || o.budget_to == null || o.budget_to >= filters.budgetMin)
+        .filter((o) => filters?.budgetMax === undefined || o.budget_from == null || o.budget_from <= filters.budgetMax)
         .sort((a, b) => b.created_at.localeCompare(a.created_at))
     },
     async mine() {
@@ -330,8 +338,15 @@ export const mockApi = {
   },
 
   laborTasks: {
-    async feed() {
-      return db.labor_tasks.filter((t) => t.status === 'active').sort((a, b) => b.created_at.localeCompare(a.created_at))
+    async feed(filters?: LaborFeedFilters) {
+      const search = filters?.search?.trim().toLowerCase()
+      return db.labor_tasks
+        .filter((t) => t.status === 'active')
+        .filter((t) => !filters?.city || (t.city ?? '').toLowerCase().includes(filters.city.trim().toLowerCase()))
+        .filter((t) => !search || t.title.toLowerCase().includes(search) || t.description.toLowerCase().includes(search))
+        .filter((t) => !filters?.payType || t.pay_type === filters.payType)
+        .filter((t) => filters?.payMin === undefined || t.pay_amount == null || t.pay_amount >= filters.payMin)
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))
     },
     async mine() {
       const uid = requireSession()
