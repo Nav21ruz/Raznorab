@@ -112,33 +112,87 @@ function buildMockWebApp(): WebAppType {
   } as any
 }
 
-export const isTelegramEnvironment = typeof window !== 'undefined' && !!window.Telegram?.WebApp?.initData
+const TG_SDK_URL = 'https://telegram.org/js/telegram-web-app.js'
+const TG_FLAG_KEY = 'raznorab_launched_from_telegram'
 
-export const tg: WebAppType = (typeof window !== 'undefined' && window.Telegram?.WebApp) || buildMockWebApp()
+/**
+ * Telegram запускает мини-апп, передавая параметры в hash: #tgWebAppData=...&tgWebAppPlatform=...
+ * Это позволяет понять, что мы внутри Telegram, ДО загрузки SDK — и не ходить на
+ * telegram.org в обычном вебе. Флаг дублируем в sessionStorage, т.к. при навигации
+ * внутри приложения hash теряется.
+ */
+function detectTelegramLaunch(): boolean {
+  if (typeof window === 'undefined') return false
+  const hash = window.location.hash
+  if (hash.includes('tgWebAppData') || hash.includes('tgWebAppPlatform')) {
+    try { sessionStorage.setItem(TG_FLAG_KEY, '1') } catch { /* приватный режим */ }
+    return true
+  }
+  // SDK мог быть подключён извне (например, кастомной сборкой клиента)
+  if (window.Telegram?.WebApp?.initData) return true
+  try { return sessionStorage.getItem(TG_FLAG_KEY) === '1' } catch { return false }
+}
 
-export function initTelegram() {
+export const isTelegramEnvironment = detectTelegramLaunch()
+
+let sdkPromise: Promise<void> | null = null
+
+function loadTelegramSdk(): Promise<void> {
+  if (window.Telegram?.WebApp) return Promise.resolve()
+  if (sdkPromise) return sdkPromise
+
+  sdkPromise = new Promise<void>((resolve) => {
+    const script = document.createElement('script')
+    script.src = TG_SDK_URL
+    script.async = true
+    script.onload = () => resolve()
+    // не смогли загрузить (нет сети / домен заблокирован) — работаем как обычный веб
+    script.onerror = () => resolve()
+    document.head.appendChild(script)
+
+    // страховка: не ждём SDK дольше 3 секунд, иначе приложение "залипает"
+    window.setTimeout(resolve, 3000)
+  })
+  return sdkPromise
+}
+
+// Реальный WebApp появляется только после загрузки SDK, поэтому обращаемся лениво.
+const mockWebApp = buildMockWebApp()
+
+function currentWebApp(): WebAppType {
+  return (typeof window !== 'undefined' && window.Telegram?.WebApp) || mockWebApp
+}
+
+/**
+ * Готовит окружение. В обычном вебе завершается мгновенно и не делает сетевых запросов,
+ * внутри Telegram — догружает SDK и инициализирует мини-апп.
+ */
+export async function initTelegram(): Promise<void> {
+  if (!isTelegramEnvironment) return
+  await loadTelegramSdk()
   try {
-    tg.ready()
-    tg.expand()
-    tg.setHeaderColor('#0f1117')
-    tg.setBackgroundColor('#0f1117')
+    const app = currentWebApp()
+    app.ready()
+    app.expand()
+    app.setHeaderColor('#0f1117')
+    app.setBackgroundColor('#0f1117')
   } catch {
     // окружение не поддерживает часть API — не критично
   }
 }
 
 export function getTelegramUser(): WebAppUser | null {
-  return tg.initDataUnsafe?.user ?? null
+  return currentWebApp().initDataUnsafe?.user ?? null
 }
 
 export const haptic = {
   impact: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'light') => {
-    try { tg.HapticFeedback.impactOccurred(style) } catch { /* noop */ }
+    try { currentWebApp().HapticFeedback.impactOccurred(style) } catch { /* noop */ }
   },
   notification: (type: 'error' | 'success' | 'warning') => {
-    try { tg.HapticFeedback.notificationOccurred(type) } catch { /* noop */ }
+    try { currentWebApp().HapticFeedback.notificationOccurred(type) } catch { /* noop */ }
   },
   selection: () => {
-    try { tg.HapticFeedback.selectionChanged() } catch { /* noop */ }
+    try { currentWebApp().HapticFeedback.selectionChanged() } catch { /* noop */ }
   },
 }

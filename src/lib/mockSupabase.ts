@@ -240,10 +240,26 @@ function getOrCreateUid(): string {
 
 type AuthListener = (event: string, session: unknown) => void
 let authListeners: AuthListener[] = []
-let currentSession: { user: { id: string; is_anonymous: boolean } } | null = null
+let currentSession: { user: { id: string; is_anonymous: boolean; email?: string } } | null = null
 {
   const existingUid = typeof localStorage !== 'undefined' ? localStorage.getItem(UID_KEY) : null
   if (existingUid) currentSession = { user: { id: existingUid, is_anonymous: true } }
+}
+
+// Учётки email/пароль для демо-режима (в реальном Supabase этим занимается auth.users)
+const EMAIL_USERS_KEY = 'raznorab_mock_email_users'
+type MockEmailUser = { id: string; email: string; password: string }
+
+function loadEmailUsers(): MockEmailUser[] {
+  try { return JSON.parse(localStorage.getItem(EMAIL_USERS_KEY) || '[]') as MockEmailUser[] } catch { return [] }
+}
+function saveEmailUsers(users: MockEmailUser[]) {
+  try { localStorage.setItem(EMAIL_USERS_KEY, JSON.stringify(users)) } catch { /* ignore */ }
+}
+function setSession(user: { id: string; is_anonymous: boolean; email?: string }) {
+  currentSession = { user }
+  localStorage.setItem(UID_KEY, user.id)
+  authListeners.forEach((cb) => cb('SIGNED_IN', currentSession))
 }
 
 const storageFiles = new Map<string, string>()
@@ -272,11 +288,48 @@ export function createMockClient() {
         authListeners.forEach((cb) => cb('SIGNED_IN', currentSession))
         return { data: { session: currentSession, user: currentSession.user }, error: null }
       },
-      async signInWithPassword() {
-        return { data: { session: null, user: null }, error: { message: 'Демо-режим: вход по email недоступен без реального Supabase-проекта' } }
+      async signInWithPassword({ email, password }: { email: string; password: string }) {
+        const users = loadEmailUsers()
+        const found = users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase())
+        if (!found || found.password !== password) {
+          return { data: { session: null, user: null }, error: { message: 'Invalid login credentials' } }
+        }
+        setSession({ id: found.id, is_anonymous: false, email: found.email })
+        return { data: { session: currentSession, user: currentSession!.user }, error: null }
       },
-      async signUp() {
-        return { data: { session: null, user: null }, error: { message: 'Демо-режим: регистрация недоступна без реального Supabase-проекта' } }
+      async signUp({ email, password }: { email: string; password: string }) {
+        const normalized = email.trim().toLowerCase()
+        const users = loadEmailUsers()
+        if (users.some((u) => u.email.toLowerCase() === normalized)) {
+          return { data: { session: null, user: null }, error: { message: 'User already registered' } }
+        }
+        // если пользователь уже ходил анонимно — сохраняем его id, чтобы данные не потерялись
+        const id = currentSession?.user.is_anonymous ? currentSession.user.id : crypto.randomUUID()
+        users.push({ id, email: normalized, password })
+        saveEmailUsers(users)
+        setSession({ id, is_anonymous: false, email: normalized })
+        return { data: { session: currentSession, user: currentSession!.user }, error: null }
+      },
+      async updateUser({ email, password }: { email?: string; password?: string }) {
+        if (!currentSession) return { data: { user: null }, error: { message: 'Not authenticated' } }
+        const users = loadEmailUsers()
+        const normalized = email?.trim().toLowerCase()
+        if (normalized && users.some((u) => u.email.toLowerCase() === normalized && u.id !== currentSession!.user.id)) {
+          return { data: { user: null }, error: { message: 'User already registered' } }
+        }
+        const existing = users.find((u) => u.id === currentSession!.user.id)
+        if (existing) {
+          if (normalized) existing.email = normalized
+          if (password) existing.password = password
+        } else if (normalized && password) {
+          users.push({ id: currentSession.user.id, email: normalized, password })
+        }
+        saveEmailUsers(users)
+        setSession({ id: currentSession.user.id, is_anonymous: false, email: normalized ?? currentSession.user.email })
+        return { data: { user: currentSession!.user }, error: null }
+      },
+      async resetPasswordForEmail() {
+        return { data: {}, error: { message: 'Демо-режим: письмо для сброса пароля не отправляется' } }
       },
       async signOut() {
         currentSession = null

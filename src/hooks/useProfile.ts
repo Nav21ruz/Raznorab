@@ -4,16 +4,12 @@ import { getTelegramUser } from '../lib/telegram'
 import type { BuilderProfile, Profile } from '../types/marketplace'
 
 async function fetchOrCreateProfile(): Promise<Profile> {
-  const { data: { session: existingSession } } = await supabase.auth.getSession()
-  let session = existingSession
+  // Сессию к этому моменту уже обеспечил AuthGate (анонимную в Telegram,
+  // либо настоящий вход по email в вебе).
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) throw new Error('Не авторизован')
 
-  if (!session) {
-    const { data, error } = await supabase.auth.signInAnonymously()
-    if (error) throw error
-    session = data.session
-  }
-
-  const uid = session!.user.id
+  const uid = session.user.id
 
   const { data: existing, error: fetchErr } = await supabase
     .from('profiles')
