@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { HardHat, Info } from 'lucide-react'
-import { supabase, isMockBackend } from '../../lib/supabase'
+import { api, isMockBackend } from '../../lib/api'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
 
@@ -22,24 +22,15 @@ export function WebAuthPage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    const payload = { email: data.email.trim(), password: data.password }
-
-    if (mode === 'login') {
-      const { error } = await supabase.auth.signInWithPassword(payload)
-      if (error) {
-        toast.error(error.message.includes('Invalid login') ? 'Неверный email или пароль' : 'Не удалось войти')
+    const email = data.email.trim()
+    try {
+      if (mode === 'login') {
+        await api.auth.login(email, data.password)
+      } else {
+        await api.auth.register(email, data.password)
       }
-      return
-    }
-
-    const { data: result, error } = await supabase.auth.signUp(payload)
-    if (error) {
-      toast.error(error.message.includes('already registered') ? 'Такой email уже зарегистрирован' : 'Не удалось зарегистрироваться')
-      return
-    }
-    // Если в проекте включено подтверждение почты, сессии сразу не будет
-    if (!result.session) {
-      toast.success('Мы отправили письмо для подтверждения — проверьте почту')
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Не удалось выполнить вход')
     }
   }
 

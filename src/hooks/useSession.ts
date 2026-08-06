@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react'
-import type { Session } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { api } from '../lib/api'
+import { onAuthChange } from '../lib/authEvents'
+import type { Profile } from '../types/marketplace'
 
 /** undefined — ещё проверяем, null — не авторизован */
-export function useSession(): Session | null | undefined {
-  const [session, setSession] = useState<Session | null | undefined>(undefined)
+export function useSession(): Profile | null | undefined {
+  const [profile, setProfile] = useState<Profile | null | undefined>(undefined)
 
   useEffect(() => {
     let active = true
-    supabase.auth.getSession().then(({ data }) => {
-      if (active) setSession(data.session)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, next) => {
-      setSession(next)
-    })
+    const refresh = () => {
+      api.auth.me().then((p) => { if (active) setProfile(p) })
+    }
+    refresh()
+    const unsubscribe = onAuthChange(refresh)
     return () => {
       active = false
-      subscription.unsubscribe()
+      unsubscribe()
     }
   }, [])
 
-  return session
+  return profile
 }

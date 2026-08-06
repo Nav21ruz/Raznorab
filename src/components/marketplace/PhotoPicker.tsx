@@ -8,7 +8,7 @@ const MAX_FILE_SIZE = 8 * 1024 * 1024 // 8 МБ — фото с телефона
 interface Props {
   photos: string[]
   onChange: (photos: string[]) => void
-  folder: string
+  folder: 'orders' | 'builder-portfolio'
   max?: number
   label?: string
 }

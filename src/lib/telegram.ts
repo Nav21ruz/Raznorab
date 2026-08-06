@@ -185,6 +185,11 @@ export function getTelegramUser(): WebAppUser | null {
   return currentWebApp().initDataUnsafe?.user ?? null
 }
 
+/** Подписанная строка initData — сервер проверяет её подлинность (см. server/src/auth/telegram.js) */
+export function getTelegramInitData(): string {
+  return currentWebApp().initData
+}
+
 export const haptic = {
   impact: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'light') => {
     try { currentWebApp().HapticFeedback.impactOccurred(style) } catch { /* noop */ }

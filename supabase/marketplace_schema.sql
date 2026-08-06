@@ -214,8 +214,14 @@ create index labor_tasks_status_created_idx on labor_tasks (status, created_at d
 create index order_swipes_builder_idx on order_swipes (builder_id);
 create index messages_conversation_created_idx on messages (conversation_id, created_at);
 
--- Realtime для чата
-alter publication supabase_realtime add table messages;
+-- Realtime для чата (публикация есть только в Supabase; на обычном PostgreSQL,
+-- например при самостоятельном хостинге, её нет — там чат обновляется опросом)
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    alter publication supabase_realtime add table messages;
+  end if;
+end $$;
 
 -- Storage bucket для фото заказов, портфолио и задач (выполнить вручную в Dashboard → Storage)
 -- Bucket name: marketplace-photos, public: true

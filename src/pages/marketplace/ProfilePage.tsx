@@ -11,7 +11,7 @@ import { PhotoPicker } from '../../components/marketplace/PhotoPicker'
 import { useBuilderProfile, useUpdateProfile, useUpsertBuilderProfile } from '../../hooks/useProfile'
 import { useBannedWords } from '../../hooks/useModeration'
 import { containsProfanity, maskProfanity } from '../../lib/profanity'
-import { isMockBackend, supabase } from '../../lib/supabase'
+import { api, isMockBackend } from '../../lib/api'
 import { isTelegramEnvironment } from '../../lib/telegram'
 import { BUILDER_CATEGORIES, ROLE_LABELS, type BuilderProfile, type Profile, type Role } from '../../types/marketplace'
 
@@ -92,7 +92,7 @@ export function ProfilePage() {
       {/* Внутри Telegram выхода нет — личность даёт мессенджер, выходить некуда */}
       {!isTelegramEnvironment && (
         <button
-          onClick={() => supabase.auth.signOut()}
+          onClick={() => api.auth.logout()}
           className="w-full mt-8 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors"
         >
           <LogOut className="w-4 h-4" /> Выйти из аккаунта
@@ -114,10 +114,10 @@ type BuilderFormData = z.infer<typeof builderSchema>
 function BuilderProfileSection({ builderId }: { builderId: string }) {
   const { data: builderProfile, isLoading } = useBuilderProfile(builderId)
   if (isLoading) return null
-  return <BuilderProfileForm builderId={builderId} builderProfile={builderProfile ?? null} />
+  return <BuilderProfileForm builderProfile={builderProfile ?? null} />
 }
 
-function BuilderProfileForm({ builderId, builderProfile }: { builderId: string; builderProfile: BuilderProfile | null }) {
+function BuilderProfileForm({ builderProfile }: { builderProfile: BuilderProfile | null }) {
   const upsertBuilder = useUpsertBuilderProfile()
   const { data: bannedWords } = useBannedWords()
   const [specialties, setSpecialties] = useState<string[]>(builderProfile?.specialties ?? [])
@@ -195,7 +195,7 @@ function BuilderProfileForm({ builderId, builderProfile }: { builderId: string; 
           />
         </div>
 
-        <PhotoPicker photos={portfolioPhotos} onChange={setPortfolioPhotos} folder={`portfolio/${builderId}`} label="Портфолио (фото работ)" max={9} />
+        <PhotoPicker photos={portfolioPhotos} onChange={setPortfolioPhotos} folder="builder-portfolio" label="Портфолио (фото работ)" max={9} />
 
         <Button type="submit" loading={upsertBuilder.isPending} className="w-full justify-center">
           Сохранить профиль строителя
