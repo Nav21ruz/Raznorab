@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, Share2, FileDown, Copy, Check, MapPin, Calendar } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '../lib/supabase'
+import { randomId } from '../lib/uuid'
 import { useObject } from '../hooks/useObjects'
 import { useEntries } from '../hooks/useEntries'
 import { usePhotos } from '../hooks/usePhotos'
@@ -24,7 +25,7 @@ export function ObjectDetailPage() {
   const [copied, setCopied] = useState(false)
 
   const generateShareLink = async () => {
-    const token = crypto.randomUUID()
+    const token = randomId()
     const { error } = await supabase.from('share_tokens').insert({ object_id: id, token })
     if (!error) {
       const url = `${window.location.origin}/share/${token}`

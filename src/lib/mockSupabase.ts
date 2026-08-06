@@ -9,6 +9,8 @@
  * их корректность проверена отдельно against a real Postgres instance.
  */
 
+import { randomId } from './uuid'
+
 type Row = Record<string, unknown>
 type Store = Record<string, Row[]>
 
@@ -16,7 +18,7 @@ const DB_KEY = 'raznorab_mock_db_v1'
 const UID_KEY = 'raznorab_mock_auth_uid'
 
 function uuid() {
-  return crypto.randomUUID()
+  return randomId()
 }
 
 function seedStore(): Store {
@@ -232,7 +234,7 @@ class MockQueryBuilder implements PromiseLike<{ data: unknown; error: unknown }>
 function getOrCreateUid(): string {
   let uid = localStorage.getItem(UID_KEY)
   if (!uid) {
-    uid = crypto.randomUUID()
+    uid = randomId()
     localStorage.setItem(UID_KEY, uid)
   }
   return uid
@@ -304,7 +306,7 @@ export function createMockClient() {
           return { data: { session: null, user: null }, error: { message: 'User already registered' } }
         }
         // если пользователь уже ходил анонимно — сохраняем его id, чтобы данные не потерялись
-        const id = currentSession?.user.is_anonymous ? currentSession.user.id : crypto.randomUUID()
+        const id = currentSession?.user.is_anonymous ? currentSession.user.id : randomId()
         users.push({ id, email: normalized, password })
         saveEmailUsers(users)
         setSession({ id, is_anonymous: false, email: normalized })
