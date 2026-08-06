@@ -133,10 +133,7 @@ export function WebAuthPage() {
           )}
         </div>
 
-        <p className="text-xs text-gray-600 text-center mt-6">
-          Открыв приложение внутри Telegram, входить не нужно — вход произойдёт автоматически.
-        </p>
-        <p className="text-xs text-gray-700 text-center mt-2">
+        <p className="text-xs text-gray-700 text-center mt-6">
           <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
           {' · '}
           <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
