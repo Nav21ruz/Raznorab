@@ -37,6 +37,9 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+          // config.js правится прямо на хостинге — если закэшировать его в service worker,
+          // приложение продолжит работать со старыми ключами
+          globIgnores: ['**/config.js'],
           // API и авторизация всегда идут в сеть — кэшировать чужие/приватные данные нельзя
           navigateFallbackDenylist: [/^\/api/],
           runtimeCaching: [

@@ -1,0 +1,42 @@
+# ============================================================
+# Настройки для Apache-хостинга (reg.ru и подобные)
+# ============================================================
+
+# --- Одностраничное приложение: любой неизвестный путь отдаём index.html ---
+# Без этого прямые ссылки (/orders, /chats/…) и обновление страницы дают 404.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # реально существующие файлы и папки отдаём как есть
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# --- Кэширование ---
+<IfModule mod_headers.c>
+  # файлы сборки содержат хэш в имени — можно кэшировать надолго
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # а это должно перечитываться, иначе правки настроек и обновления не доедут
+  <FilesMatch "^(index\.html|config\.js|sw\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --- Сжатие ---
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Правильные типы файлов ---
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml .svg
+</IfModule>
