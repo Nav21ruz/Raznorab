@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { serviceQuery, serviceTx, withUserContext } from '../db.js'
 import { signToken } from '../auth/jwt.js'
 import { verifyTelegramInitData } from '../auth/telegram.js'
+import { exchangeYandexCode } from '../auth/yandex.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { ApiError, asyncRoute } from '../errors.js'
 
@@ -96,6 +97,30 @@ authRouter.post('/telegram', asyncRoute(async (req, res) => {
           tgUser.last_name ?? null,
           tgUser.photo_url ?? null,
         ]
+      )
+      return rows[0]
+    })
+  }
+
+  res.json({ token: signToken(profile.id), profile })
+}))
+
+authRouter.post('/yandex', asyncRoute(async (req, res) => {
+  const code = req.body?.code
+  if (typeof code !== 'string' || !code) throw new ApiError(400, 'Нет кода авторизации Яндекса')
+  const yaUser = await exchangeYandexCode(code)
+
+  const { rows: found } = await serviceQuery('select * from profiles where yandex_id = $1', [yaUser.id])
+  let profile = found[0]
+
+  if (!profile) {
+    const profileId = crypto.randomUUID()
+    profile = await serviceTx(async (c) => {
+      await c.query('insert into auth.users(id) values ($1)', [profileId])
+      const { rows } = await c.query(
+        `insert into profiles(id, yandex_id, first_name, last_name, photo_url)
+         values ($1, $2, $3, $4, $5) returning *`,
+        [profileId, yaUser.id, yaUser.firstName, yaUser.lastName, yaUser.photoUrl]
       )
       return rows[0]
     })

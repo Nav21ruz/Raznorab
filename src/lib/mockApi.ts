@@ -183,6 +183,15 @@ export const mockApi = {
       setSessionId(profile.id)
       return profile
     },
+    // Настоящий OAuth Яндекса требует зарегистрированное приложение и реальный
+    // сервер для обмена кода — в демо-режиме кнопка входа через Яндекс скрыта
+    // (см. yandexLoginAvailable в api.ts), эти методы сюда не должны попадать.
+    buildYandexAuthorizeUrl(): string {
+      throw new Error('Вход через Яндекс недоступен в демо-режиме')
+    },
+    async yandex(): Promise<Profile> {
+      throw new Error('Вход через Яндекс недоступен в демо-режиме')
+    },
     async me() {
       const id = getSessionId()
       if (!id) return null

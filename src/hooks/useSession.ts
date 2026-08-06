@@ -10,7 +10,14 @@ export function useSession(): Profile | null | undefined {
   useEffect(() => {
     let active = true
     const refresh = () => {
-      api.auth.me().then((p) => { if (active) setProfile(p) })
+      api.auth.me()
+        .then((p) => { if (active) setProfile(p) })
+        .catch(() => {
+          // Сетевой сбой или сервер временно недоступен (api.auth.me бросает исключение
+          // только в этом случае — настоящую невалидность токена он гасит сам и просто
+          // возвращает null). Не сбрасываем состояние — пусть человек останется как был,
+          // а не увидит внезапный выход из аккаунта из-за случайного обрыва связи.
+        })
     }
     refresh()
     const unsubscribe = onAuthChange(refresh)

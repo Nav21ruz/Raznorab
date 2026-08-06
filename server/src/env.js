@@ -25,4 +25,10 @@ export const env = {
     secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? '',
     publicBaseUrl: process.env.S3_PUBLIC_BASE_URL ?? '',
   },
+  yandex: {
+    // client_id не секретен (виден в адресе браузера при входе), client_secret — секретен,
+    // используется только здесь, на сервере, никогда не отдаётся фронтенду
+    clientId: process.env.YANDEX_CLIENT_ID ?? '',
+    clientSecret: process.env.YANDEX_CLIENT_SECRET ?? '',
+  },
 }

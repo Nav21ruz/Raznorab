@@ -17,10 +17,11 @@ import type {
 } from '../types/marketplace'
 import { mockApi } from './mockApi'
 import { notifyAuthChange, onAuthChange } from './authEvents'
+import { randomId } from './uuid'
 
 declare global {
   interface Window {
-    __APP_CONFIG__?: { SUPABASE_URL?: string; SUPABASE_ANON_KEY?: string; API_URL?: string }
+    __APP_CONFIG__?: { SUPABASE_URL?: string; SUPABASE_ANON_KEY?: string; API_URL?: string; YANDEX_CLIENT_ID?: string }
   }
 }
 
@@ -31,8 +32,13 @@ declare global {
  */
 const runtimeConfig = typeof window !== 'undefined' ? window.__APP_CONFIG__ : undefined
 const API_URL = (runtimeConfig?.API_URL || import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '')
+const YANDEX_CLIENT_ID = (runtimeConfig?.YANDEX_CLIENT_ID || import.meta.env.VITE_YANDEX_CLIENT_ID || '').trim()
 
 export const isMockBackend = !API_URL
+// Настоящий OAuth Яндекса нельзя осмысленно показать в демо-режиме (нет
+// реального сервера для обмена кода), поэтому кнопка появляется только когда
+// задан и сервер, и client_id приложения в Яндексе.
+export const yandexLoginAvailable = !isMockBackend && !!YANDEX_CLIENT_ID
 
 if (isMockBackend) {
   console.warn(
@@ -42,6 +48,7 @@ if (isMockBackend) {
 }
 
 const TOKEN_KEY = 'raznorab_api_token'
+const YANDEX_STATE_KEY = 'raznorab_yandex_oauth_state'
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
@@ -56,6 +63,16 @@ export function clearToken() {
 }
 export { onAuthChange }
 
+/** status отсутствует при сетевой ошибке (сервер недоступен) — отличаем от
+ * настоящего отказа сервера (401 и т.д.), где сервер точно ответил "нет". */
+export class ApiRequestError extends Error {
+  status?: number
+  constructor(message: string, status?: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken()
   const headers: Record<string, string> = { ...(options.headers as Record<string, string> | undefined) }
@@ -66,11 +83,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   try {
     res = await fetch(`${API_URL}${path}`, { ...options, headers })
   } catch {
-    throw new Error('Нет связи с сервером. Проверьте подключение к интернету.')
+    throw new ApiRequestError('Нет связи с сервером. Проверьте подключение к интернету.')
   }
   if (res.status === 204) return undefined as T
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || 'Ошибка сервера')
+  if (!res.ok) throw new ApiRequestError(data.error || 'Ошибка сервера', res.status)
   return data as T
 }
 
@@ -100,14 +117,47 @@ const realApi = {
       setToken(r.token)
       return r.profile
     },
+    /** Строит ссылку на страницу входа Яндекса и запоминает одноразовый state
+     * (защита от CSRF — без него кто угодно мог бы прислать чужой код входа). */
+    buildYandexAuthorizeUrl() {
+      const state = randomId()
+      sessionStorage.setItem(YANDEX_STATE_KEY, state)
+      const redirectUri = `${window.location.origin}/auth/yandex/callback`
+      const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: YANDEX_CLIENT_ID,
+        redirect_uri: redirectUri,
+        state,
+      })
+      return `https://oauth.yandex.ru/authorize?${params.toString()}`
+    },
+    async yandex(code: string, state: string) {
+      const expected = sessionStorage.getItem(YANDEX_STATE_KEY)
+      sessionStorage.removeItem(YANDEX_STATE_KEY)
+      if (!expected || expected !== state) {
+        throw new Error('Не удалось подтвердить вход через Яндекс — попробуйте ещё раз')
+      }
+      const r = await request<{ token: string; profile: Profile }>('/auth/yandex', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      })
+      setToken(r.token)
+      return r.profile
+    },
     async me() {
       if (!getToken()) return null
       try {
         const r = await request<{ profile: Profile }>('/auth/me')
         return r.profile
-      } catch {
-        clearToken()
-        return null
+      } catch (e) {
+        // Разлогиниваем только если сервер ЯВНО сказал "токен недействителен" (401).
+        // Сетевой сбой или временная недоступность сервера — не повод молча выкинуть
+        // человека из аккаунта; пусть останется как есть и попробует ещё раз.
+        if (e instanceof ApiRequestError && e.status === 401) {
+          clearToken()
+          return null
+        }
+        throw e
       }
     },
     logout() {

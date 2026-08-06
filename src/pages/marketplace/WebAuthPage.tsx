@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { Link } from 'react-router-dom'
 import { HardHat, Info } from 'lucide-react'
-import { api, isMockBackend } from '../../lib/api'
+import { api, isMockBackend, yandexLoginAvailable } from '../../lib/api'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
 
@@ -107,6 +107,30 @@ export function WebAuthPage() {
               {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
             </Button>
           </form>
+
+          {yandexLoginAvailable && (
+            <>
+              <div className="flex items-center gap-3 my-5">
+                <div className="h-px bg-gray-800 flex-1" />
+                <span className="text-xs text-gray-600">или</span>
+                <div className="h-px bg-gray-800 flex-1" />
+              </div>
+              <button
+                type="button"
+                onClick={() => { window.location.href = api.auth.buildYandexAuthorizeUrl() }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-gray-900 font-medium text-sm hover:bg-gray-100 transition-colors"
+              >
+                <span className="w-5 h-5 rounded-full bg-[#fc3f1d] text-white flex items-center justify-center text-xs font-bold shrink-0">Я</span>
+                Войти через Яндекс
+              </button>
+              <p className="text-xs text-gray-600 text-center mt-3">
+                Продолжая, вы принимаете{' '}
+                <Link to="/terms" target="_blank" className="hover:text-gray-400 underline">условия</Link>
+                {' '}и{' '}
+                <Link to="/privacy" target="_blank" className="hover:text-gray-400 underline">политику конфиденциальности</Link>
+              </p>
+            </>
+          )}
         </div>
 
         <p className="text-xs text-gray-600 text-center mt-6">
