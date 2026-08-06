@@ -1,7 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Heart, X } from 'lucide-react'
 import { SwipeCard, type SwipeDirection } from './SwipeCard'
-import { haptic } from '../../lib/telegram'
 
 interface Props<T> {
   items: T[]
@@ -25,7 +24,6 @@ export function SwipeDeck<T>({ items, keyExtractor, renderCard, onDecide, emptyS
   function commit(item: T, direction: SwipeDirection) {
     const id = keyExtractor(item)
     if (exiting) return
-    haptic.impact(direction === 'like' ? 'medium' : 'light')
     setExiting({ id, direction })
     window.setTimeout(() => {
       setDecidedIds((prev) => {

@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { Session } from '@supabase/supabase-js'
 import { Toaster } from 'sonner'
 import { supabase } from './lib/supabase'
-import { initTelegram } from './lib/telegram'
 import { Spinner } from './components/shared/Spinner'
 
 // Журнал объекта (существующий инструмент для прораба) — грузится отдельным чанком,
@@ -17,7 +16,7 @@ const EntryDetailPage = lazy(() => import('./pages/EntryDetailPage').then((m) =>
 const SharePage = lazy(() => import('./pages/SharePage').then((m) => ({ default: m.SharePage })))
 const StatsPage = lazy(() => import('./pages/StatsPage').then((m) => ({ default: m.StatsPage })))
 
-// Стройбиржа (Telegram mini-app + веб-версия: заказчики, строители, разнорабочие)
+// Стройбиржа: заказчики, строители, разнорабочие
 import { AuthGate } from './components/marketplace/AuthGate'
 import { MarketplaceShell } from './components/marketplace/MarketplaceShell'
 import { OnboardingPage } from './pages/marketplace/OnboardingPage'
@@ -82,8 +81,6 @@ function JournalGate() {
 }
 
 export default function App() {
-  useEffect(() => { initTelegram() }, [])
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={import.meta.env.BASE_URL}>

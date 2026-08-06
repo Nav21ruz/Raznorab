@@ -155,34 +155,6 @@ export const mockApi = {
       setSessionId(found.id)
       return findProfile(found.id)
     },
-    async telegram(initData: string) {
-      const params = new URLSearchParams(initData)
-      const userJson = params.get('user')
-      // Демо-режим тестируется без настоящего Telegram SDK (пустой initData) —
-      // подставляем фиксированного тестового пользователя, как раньше делал мок SDK.
-      const tgUser = userJson
-        ? (JSON.parse(userJson) as { id: number; first_name?: string; last_name?: string; username?: string; photo_url?: string })
-        : { id: 100000001, first_name: 'Тест', last_name: 'Пользователь', username: 'test_user' }
-      let profile = db.profiles.find((p) => p.telegram_id === tgUser.id)
-      if (!profile) {
-        profile = {
-          id: randomId(),
-          telegram_id: tgUser.id,
-          telegram_username: tgUser.username ?? null,
-          first_name: tgUser.first_name ?? 'Пользователь',
-          last_name: tgUser.last_name ?? null,
-          photo_url: tgUser.photo_url ?? null,
-          phone: null,
-          city: null,
-          role: null,
-          created_at: new Date().toISOString(),
-        }
-        db.profiles.push(profile)
-        persist()
-      }
-      setSessionId(profile.id)
-      return profile
-    },
     // Настоящий OAuth Яндекса требует зарегистрированное приложение и реальный
     // сервер для обмена кода — в демо-режиме кнопка входа через Яндекс скрыта
     // (см. yandexLoginAvailable в api.ts), эти методы сюда не должны попадать.

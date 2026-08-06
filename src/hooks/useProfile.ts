@@ -7,7 +7,7 @@ export function useMyProfile() {
     queryKey: ['profile', 'me'],
     queryFn: async () => {
       // К этому моменту сессию уже обеспечил AuthGate — профиль на сервере
-      // создаётся автоматически при регистрации/входе через Telegram.
+      // создаётся автоматически при регистрации.
       const profile = await api.auth.me()
       if (!profile) throw new Error('Не авторизован')
       return profile

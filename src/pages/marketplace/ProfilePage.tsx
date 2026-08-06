@@ -12,7 +12,6 @@ import { useBuilderProfile, useUpdateProfile, useUpsertBuilderProfile } from '..
 import { useBannedWords } from '../../hooks/useModeration'
 import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { api, isMockBackend } from '../../lib/api'
-import { isTelegramEnvironment } from '../../lib/telegram'
 import { BUILDER_CATEGORIES, ROLE_LABELS, type BuilderProfile, type Profile, type Role } from '../../types/marketplace'
 
 const ROLE_ICONS: Record<Role, typeof Users> = { customer: Users, builder: HardHat, laborer: Wrench }
@@ -89,15 +88,12 @@ export function ProfilePage() {
 
       {profile.role === 'builder' && <BuilderProfileSection builderId={profile.id} />}
 
-      {/* Внутри Telegram выхода нет — личность даёт мессенджер, выходить некуда */}
-      {!isTelegramEnvironment && (
-        <button
-          onClick={() => api.auth.logout()}
-          className="w-full mt-8 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors"
-        >
-          <LogOut className="w-4 h-4" /> Выйти из аккаунта
-        </button>
-      )}
+      <button
+        onClick={() => api.auth.logout()}
+        className="w-full mt-8 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors"
+      >
+        <LogOut className="w-4 h-4" /> Выйти из аккаунта
+      </button>
 
       <p className="text-xs text-gray-700 text-center mt-6">
         <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>

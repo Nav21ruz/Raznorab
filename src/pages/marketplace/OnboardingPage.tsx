@@ -9,7 +9,6 @@ import { Button } from '../../components/shared/Button'
 import { Input } from '../../components/shared/Input'
 import { useMyProfile, useUpdateProfile, useUpsertBuilderProfile } from '../../hooks/useProfile'
 import { BUILDER_CATEGORIES, type Role } from '../../types/marketplace'
-import { haptic } from '../../lib/telegram'
 
 const ROLE_OPTIONS: { role: Role; title: string; description: string; icon: typeof Users }[] = [
   { role: 'customer', title: 'Я заказчик', description: 'Ищу строителей или разнорабочих для своих задач', icon: Users },
@@ -65,7 +64,7 @@ export function OnboardingPage() {
           {ROLE_OPTIONS.map(({ role: r, title, description, icon: Icon }) => (
             <button
               key={r}
-              onClick={() => { haptic.selection(); setRole(r) }}
+              onClick={() => setRole(r)}
               className="flex items-center gap-4 p-4 bg-gray-900 border border-gray-800 rounded-2xl hover:border-orange-500/50 active:scale-[0.98] transition-all text-left"
             >
               <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">

@@ -109,14 +109,6 @@ const realApi = {
       setToken(r.token)
       return r.profile
     },
-    async telegram(initData: string) {
-      const r = await request<{ token: string; profile: Profile }>('/auth/telegram', {
-        method: 'POST',
-        body: JSON.stringify({ initData }),
-      })
-      setToken(r.token)
-      return r.profile
-    },
     /** Строит ссылку на страницу входа Яндекса и запоминает одноразовый state
      * (защита от CSRF — без него кто угодно мог бы прислать чужой код входа). */
     buildYandexAuthorizeUrl() {
