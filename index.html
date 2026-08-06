@@ -25,7 +25,110 @@
     -->
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Внутри root лежит заглушка "Загрузка…". Когда приложение стартует, React
+      затирает её собой. Если код не запустился — вместо чёрного экрана человек
+      увидит понятное сообщение, а не пустоту.
+    -->
+    <div id="root">
+      <div id="boot-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font-family:system-ui,-apple-system,sans-serif;color:#e5e7eb">
+        <div style="text-align:center;max-width:520px">
+          <div style="width:56px;height:56px;margin:0 auto 16px;border-radius:16px;background:#f97316;display:flex;align-items:center;justify-content:center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M14 6a6 6 0 0 1 6 6v3"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><rect x="2" y="15" width="20" height="4" rx="1"/>
+            </svg>
+          </div>
+          <p id="boot-text" style="color:#6b7280;font-size:14px;margin:0">Загрузка…</p>
+          <div id="boot-error" style="display:none;margin-top:16px;text-align:left;background:#1f2937;border:1px solid #374151;border-radius:12px;padding:16px">
+            <p style="color:#f87171;font-weight:600;margin:0 0 8px;font-size:15px">Приложение не запустилось</p>
+            <p style="color:#9ca3af;font-size:13px;line-height:1.6;margin:0 0 10px">
+              Покажите этот текст разработчику — по нему сразу видно причину:
+            </p>
+            <pre id="boot-error-text" style="white-space:pre-wrap;word-break:break-word;color:#e5e7eb;font-size:12px;background:#111827;padding:10px;border-radius:8px;margin:0;font-family:ui-monospace,monospace"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Ловим ошибки запуска и показываем их на экране: без этого при любой
+      // проблеме пользователь видит просто чёрную страницу и не понимает, что делать.
+      // Дополнительно сами проверяем, что именно не так с файлом, — чтобы
+      // не пришлось лезть в консоль браузера.
+      (function () {
+        var done = false
+        function render(title, details) {
+          if (done) return
+          done = true
+          var box = document.getElementById('boot-error')
+          var text = document.getElementById('boot-error-text')
+          var status = document.getElementById('boot-text')
+          if (!box || !text) return
+          if (status) status.style.display = 'none'
+          box.style.display = 'block'
+          text.textContent = title + (details ? '\n\n' + details : '')
+        }
+
+        // Определяем настоящую причину: файла нет или он отдаётся неверным типом
+        function diagnose(url) {
+          try {
+            fetch(url, { cache: 'no-store' }).then(function (r) {
+              var ct = (r.headers.get('content-type') || '(не указан)').split(';')[0]
+              if (r.status === 404) {
+                render('Файл не найден на сервере:\n' + url,
+                  'Скорее всего, содержимое архива залито не в ту папку.\n' +
+                  'Файл index.html должен лежать прямо в корневой папке сайта,\n' +
+                  'рядом с ним — папка assets.')
+              } else if (ct.indexOf('javascript') === -1) {
+                render('Хостинг отдаёт файлы .js неправильным типом.',
+                  'Файл: ' + url + '\n' +
+                  'Сервер сообщает тип: ' + ct + '\n' +
+                  'Требуется: application/javascript\n\n' +
+                  'Браузер из соображений безопасности отказывается выполнять\n' +
+                  'такой файл, поэтому страница остаётся пустой.\n\n' +
+                  'Что делать: убедитесь, что вместе с сайтом залит файл .htaccess\n' +
+                  '(он скрытый, имя начинается с точки — включите показ скрытых\n' +
+                  'файлов в файловом менеджере). Именно он задаёт правильный тип.')
+              } else {
+                render('Файл загрузился, но не выполнился.',
+                  'Файл: ' + url + '\nТип: ' + ct + ' (код ответа ' + r.status + ')')
+              }
+            }).catch(function (err) {
+              render('Не удалось загрузить файл:\n' + url, String(err))
+            })
+          } catch (err) {
+            render('Не удалось загрузить файл:\n' + url, String(err))
+          }
+        }
+
+        window.addEventListener('error', function (e) {
+          var el = e.target
+          // Сбой загрузки файла (script/link/img): у события нет текста, но есть адрес
+          if (el && el.tagName && (el.src || el.href)) {
+            var url = el.src || el.href
+            // Диагностируем только по основному скрипту — ошибки стилей вторичны
+            if (el.tagName === 'SCRIPT' || /\.js($|\?)/.test(url)) diagnose(url)
+            return
+          }
+          var msg = (e.error && e.error.stack) || e.message
+          if (msg) render('Ошибка в коде приложения:', String(msg))
+        }, true)
+
+        window.addEventListener('unhandledrejection', function (e) {
+          var r = e.reason
+          render('Ошибка при запуске:', String((r && r.stack) || r))
+        })
+
+        // Если за 12 секунд приложение так и не отрисовалось — сообщаем об этом.
+        setTimeout(function () {
+          if (document.getElementById('boot-screen')) {
+            render('Приложение не запустилось за 12 секунд.',
+              'Проверьте, что вместе с сайтом залит скрытый файл .htaccess\n' +
+              'и что index.html лежит в корневой папке сайта.')
+          }
+        }, 12000)
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
