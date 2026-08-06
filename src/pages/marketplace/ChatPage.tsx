@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
-import { Send, ArrowLeft, User } from 'lucide-react'
+import { Send, ArrowLeft, User, Flag } from 'lucide-react'
 import { toast } from 'sonner'
 import { useConversation, useMessages, useSendMessage } from '../../hooks/useConversations'
 import { useProfileById } from '../../hooks/useProfile'
 import { useOrder } from '../../hooks/useOrders'
 import { useLaborTask } from '../../hooks/useLabor'
+import { useBannedWords } from '../../hooks/useModeration'
+import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { Spinner } from '../../components/shared/Spinner'
+import { ReportModal } from '../../components/marketplace/ReportModal'
 import type { Profile } from '../../types/marketplace'
 
 export function ChatPage() {
@@ -16,7 +19,9 @@ export function ChatPage() {
   const { data: conversation } = useConversation(id)
   const { data: messages, isLoading } = useMessages(id)
   const sendMessage = useSendMessage(id ?? '')
+  const { data: bannedWords } = useBannedWords()
   const [text, setText] = useState('')
+  const [showReport, setShowReport] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const peerId = conversation ? (conversation.customer_id === profile.id ? conversation.worker_id : conversation.customer_id) : undefined
@@ -31,8 +36,10 @@ export function ChatPage() {
   const handleSend = () => {
     const trimmed = text.trim()
     if (!trimmed) return
+    const patterns = (bannedWords ?? []).map((w) => w.pattern)
+    const toSend = containsProfanity(trimmed, patterns) ? maskProfanity(trimmed, patterns) : trimmed
     setText('')
-    sendMessage.mutate(trimmed, {
+    sendMessage.mutate(toSend, {
       onError: () => {
         toast.error('Не удалось отправить сообщение')
         setText(trimmed)
@@ -51,10 +58,15 @@ export function ChatPage() {
         <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
           {peer?.photo_url ? <img src={peer.photo_url} alt="" className="w-full h-full object-cover" /> : <User className="w-4 h-4 text-gray-600" />}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-semibold text-white text-sm truncate">{peer ? `${peer.first_name} ${peer.last_name ?? ''}`.trim() : '…'}</p>
           {contextTitle && <p className="text-xs text-gray-500 truncate">{contextTitle}</p>}
         </div>
+        {peer && (
+          <button onClick={() => setShowReport(true)} className="p-2 -mr-1 text-gray-500 hover:text-red-400 shrink-0" aria-label="Пожаловаться на пользователя">
+            <Flag className="w-4 h-4" />
+          </button>
+        )}
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2">
@@ -92,6 +104,10 @@ export function ChatPage() {
           <Send className="w-4 h-4" />
         </button>
       </div>
+
+      {peer && (
+        <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="profile" targetId={peer.id} />
+      )}
     </div>
   )
 }

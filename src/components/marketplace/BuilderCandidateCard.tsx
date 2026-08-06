@@ -1,5 +1,7 @@
-import { Wallet, Clock, User } from 'lucide-react'
+import { useState } from 'react'
+import { Wallet, Clock, User, Flag } from 'lucide-react'
 import { CardShell } from './CardShell'
+import { ReportModal } from './ReportModal'
 import type { BuilderProfile, Profile } from '../../types/marketplace'
 
 function formatPrice(bp: BuilderProfile) {
@@ -11,6 +13,7 @@ function formatPrice(bp: BuilderProfile) {
 
 export function BuilderCandidateCard({ profile, builderProfile }: { profile: Profile; builderProfile: BuilderProfile | null }) {
   const photo = builderProfile?.portfolio_photos[0] ?? profile.photo_url
+  const [showReport, setShowReport] = useState(false)
 
   return (
     <CardShell>
@@ -21,6 +24,15 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
           <User className="w-14 h-14 text-gray-700" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent" />
+        <button
+          type="button"
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setShowReport(true) }}
+          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-gray-950/60 backdrop-blur-sm flex items-center justify-center text-gray-300 hover:text-red-400 transition-colors"
+          aria-label="Пожаловаться на пользователя"
+        >
+          <Flag className="w-4 h-4" />
+        </button>
       </div>
 
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
@@ -56,6 +68,8 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
           </>
         )}
       </div>
+
+      <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="profile" targetId={profile.id} />
     </CardShell>
   )
 }

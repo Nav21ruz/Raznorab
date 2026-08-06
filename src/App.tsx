@@ -33,6 +33,13 @@ import { ChatPage } from './pages/marketplace/ChatPage'
 import { ProfilePage } from './pages/marketplace/ProfilePage'
 import type { Profile } from './types/marketplace'
 
+// Админ-панель (недоступна без записи в таблице admins — см. supabase/moderation_schema.sql)
+const AdminGate = lazy(() => import('./components/admin/AdminGate').then((m) => ({ default: m.AdminGate })))
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })))
+const AdminReportsPage = lazy(() => import('./pages/admin/AdminReportsPage').then((m) => ({ default: m.AdminReportsPage })))
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then((m) => ({ default: m.AdminUsersPage })))
+const AdminWordsPage = lazy(() => import('./pages/admin/AdminWordsPage').then((m) => ({ default: m.AdminWordsPage })))
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 30, retry: 1 } },
 })
@@ -106,6 +113,13 @@ export default function App() {
 
             <Route element={<MarketplaceShell nav={false} />}>
               <Route path="/chats/:id" element={<ChatPage />} />
+            </Route>
+
+            <Route path="/admin" element={<AdminGate />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="reports" element={<AdminReportsPage />} />
+              <Route path="users" element={<AdminUsersPage />} />
+              <Route path="words" element={<AdminWordsPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

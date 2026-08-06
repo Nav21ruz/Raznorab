@@ -5,6 +5,8 @@ import { toast } from 'sonner'
 import { Input } from '../shared/Input'
 import { Button } from '../shared/Button'
 import { useCreateLaborTask } from '../../hooks/useLabor'
+import { useBannedWords } from '../../hooks/useModeration'
+import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { PAY_TYPE_LABELS, type PayType } from '../../types/marketplace'
 
 const schema = z.object({
@@ -20,16 +22,23 @@ type FormData = z.infer<typeof schema>
 
 export function LaborTaskForm({ onSuccess }: { onSuccess: () => void }) {
   const { mutateAsync, isPending } = useCreateLaborTask()
+  const { data: bannedWords } = useBannedWords()
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { pay_type: 'per_task' },
   })
 
   const onSubmit = async (data: FormData) => {
+    const patterns = (bannedWords ?? []).map((w) => w.pattern)
+    const hasProfanity = containsProfanity(data.title, patterns) || containsProfanity(data.description, patterns)
+    const title = maskProfanity(data.title, patterns)
+    const description = maskProfanity(data.description, patterns)
+    if (hasProfanity) toast.warning('Нецензурная лексика скрыта звёздочками')
+
     try {
       await mutateAsync({
-        title: data.title,
-        description: data.description,
+        title,
+        description,
         city: data.city || null,
         pay_amount: data.pay_amount ? Number(data.pay_amount) : null,
         pay_type: data.pay_type,

@@ -9,6 +9,8 @@ import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
 import { PhotoPicker } from '../../components/marketplace/PhotoPicker'
 import { useBuilderProfile, useUpdateProfile, useUpsertBuilderProfile } from '../../hooks/useProfile'
+import { useBannedWords } from '../../hooks/useModeration'
+import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { isMockBackend } from '../../lib/supabase'
 import { BUILDER_CATEGORIES, ROLE_LABELS, type BuilderProfile, type Profile, type Role } from '../../types/marketplace'
 
@@ -106,6 +108,7 @@ function BuilderProfileSection({ builderId }: { builderId: string }) {
 
 function BuilderProfileForm({ builderId, builderProfile }: { builderId: string; builderProfile: BuilderProfile | null }) {
   const upsertBuilder = useUpsertBuilderProfile()
+  const { data: bannedWords } = useBannedWords()
   const [specialties, setSpecialties] = useState<string[]>(builderProfile?.specialties ?? [])
   const [portfolioPhotos, setPortfolioPhotos] = useState<string[]>(builderProfile?.portfolio_photos ?? [])
 
@@ -124,13 +127,17 @@ function BuilderProfileForm({ builderId, builderProfile }: { builderId: string; 
       toast.error('Выберите хотя бы одну специализацию')
       return
     }
+    const patterns = (bannedWords ?? []).map((w) => w.pattern)
+    const about = data.about ? maskProfanity(data.about, patterns) : data.about
+    if (data.about && containsProfanity(data.about, patterns)) toast.warning('Нецензурная лексика скрыта звёздочками')
+
     try {
       await upsertBuilder.mutateAsync({
         specialties,
         experience_years: data.experience_years ? Number(data.experience_years) : null,
         price_from: data.price_from ? Number(data.price_from) : null,
         price_to: data.price_to ? Number(data.price_to) : null,
-        about: data.about || null,
+        about: about || null,
         portfolio_photos: portfolioPhotos,
         is_active: true,
       })

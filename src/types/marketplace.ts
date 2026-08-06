@@ -125,3 +125,52 @@ export const PAY_TYPE_LABELS: Record<PayType, string> = {
   per_day: 'за день',
   per_hour: 'за час',
 }
+
+export interface BannedWord {
+  id: string
+  pattern: string
+  created_at: string
+}
+
+export interface BannedUser {
+  profile_id: string
+  reason: string | null
+  banned_by: string | null
+  banned_at: string
+}
+
+export type ReportTargetType = 'order' | 'labor_task' | 'profile'
+export type ReportStatus = 'pending' | 'reviewed' | 'dismissed' | 'actioned'
+
+export interface Report {
+  id: string
+  reporter_id: string
+  target_type: ReportTargetType
+  target_id: string
+  reason: string
+  comment: string | null
+  status: ReportStatus
+  created_at: string
+}
+
+export const REPORT_TARGET_LABELS: Record<ReportTargetType, string> = {
+  order: 'Заказ',
+  labor_task: 'Задача',
+  profile: 'Пользователь',
+}
+
+export const REPORT_STATUS_LABELS: Record<ReportStatus, string> = {
+  pending: 'Новая',
+  reviewed: 'Рассмотрена',
+  dismissed: 'Отклонена',
+  actioned: 'Приняты меры',
+}
+
+export const REPORT_REASONS = [
+  'Мошенничество',
+  'Оскорбления / грубость',
+  'Спам или реклама',
+  'Не соответствует описанию',
+  'Нецензурная лексика',
+  'Другое',
+] as const

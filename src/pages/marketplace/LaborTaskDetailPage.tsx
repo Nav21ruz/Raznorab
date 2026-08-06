@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { toast } from 'sonner'
-import { ArrowLeft, MapPin, Wallet, Calendar, User } from 'lucide-react'
+import { ArrowLeft, MapPin, Wallet, Calendar, User, Flag } from 'lucide-react'
 import { Button } from '../../components/shared/Button'
 import { Spinner } from '../../components/shared/Spinner'
+import { ReportModal } from '../../components/marketplace/ReportModal'
 import { useLaborTask, useMyLaborResponse, useRespondToLaborTask, useTaskResponses, useAcceptLaborResponse } from '../../hooks/useLabor'
 import { useMyConversations } from '../../hooks/useConversations'
 import { PAY_TYPE_LABELS, type Profile } from '../../types/marketplace'
@@ -14,6 +15,7 @@ export function LaborTaskDetailPage() {
   const { profile } = useOutletContext<{ profile: Profile }>()
   const { data: task, isLoading } = useLaborTask(id)
   const isOwner = task?.customer_id === profile.id
+  const [showReport, setShowReport] = useState(false)
 
   if (isLoading) {
     return <div className="max-w-lg mx-auto px-4 pt-6"><Spinner className="mt-16" /></div>
@@ -26,7 +28,12 @@ export function LaborTaskDetailPage() {
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-500 hover:text-gray-300">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-bold text-white">Задача</h1>
+        <h1 className="text-xl font-bold text-white flex-1">Задача</h1>
+        {!isOwner && (
+          <button onClick={() => setShowReport(true)} className="p-2 -mr-2 text-gray-500 hover:text-red-400" aria-label="Пожаловаться на задачу">
+            <Flag className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       <div className="p-4 bg-gray-900 border border-gray-800 rounded-2xl mb-4">
@@ -50,6 +57,8 @@ export function LaborTaskDetailPage() {
       ) : (
         <LaborerRespond taskId={task.id} laborerId={profile.id} />
       )}
+
+      <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="labor_task" targetId={task.id} />
     </div>
   )
 }

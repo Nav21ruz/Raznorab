@@ -7,6 +7,8 @@ import { Input } from '../shared/Input'
 import { Button } from '../shared/Button'
 import { PhotoPicker } from './PhotoPicker'
 import { useCreateOrder } from '../../hooks/useOrders'
+import { useBannedWords } from '../../hooks/useModeration'
+import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { BUILDER_CATEGORIES } from '../../types/marketplace'
 
 const schema = z.object({
@@ -23,15 +25,22 @@ type FormData = z.infer<typeof schema>
 
 export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
   const { mutateAsync, isPending } = useCreateOrder()
+  const { data: bannedWords } = useBannedWords()
   const [photos, setPhotos] = useState<string[]>([])
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
+    const patterns = (bannedWords ?? []).map((w) => w.pattern)
+    const hasProfanity = containsProfanity(data.title, patterns) || containsProfanity(data.description, patterns)
+    const title = maskProfanity(data.title, patterns)
+    const description = maskProfanity(data.description, patterns)
+    if (hasProfanity) toast.warning('Нецензурная лексика скрыта звёздочками')
+
     try {
       await mutateAsync({
         category: data.category,
-        title: data.title,
-        description: data.description,
+        title,
+        description,
         budget_from: data.budget_from ? Number(data.budget_from) : null,
         budget_to: data.budget_to ? Number(data.budget_to) : null,
         city: data.city || null,

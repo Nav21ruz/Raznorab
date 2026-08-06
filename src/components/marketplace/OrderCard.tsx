@@ -1,5 +1,7 @@
-import { MapPin, Wallet, HardHat, ImageOff } from 'lucide-react'
+import { useState } from 'react'
+import { MapPin, Wallet, HardHat, ImageOff, Flag } from 'lucide-react'
 import { CardShell } from './CardShell'
+import { ReportModal } from './ReportModal'
 import type { Order } from '../../types/marketplace'
 
 function formatBudget(order: Order) {
@@ -11,6 +13,7 @@ function formatBudget(order: Order) {
 
 export function OrderCard({ order }: { order: Order }) {
   const photo = order.photos[0]
+  const [showReport, setShowReport] = useState(false)
 
   return (
     <CardShell>
@@ -24,6 +27,15 @@ export function OrderCard({ order }: { order: Order }) {
         <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-orange-500 text-white text-xs font-semibold">
           {order.category}
         </span>
+        <button
+          type="button"
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setShowReport(true) }}
+          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-gray-950/60 backdrop-blur-sm flex items-center justify-center text-gray-300 hover:text-red-400 transition-colors"
+          aria-label="Пожаловаться на заказ"
+        >
+          <Flag className="w-4 h-4" />
+        </button>
       </div>
 
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
@@ -49,6 +61,8 @@ export function OrderCard({ order }: { order: Order }) {
         <HardHat className="w-3.5 h-3.5" />
         Заказ от частного заказчика
       </div>
+
+      <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="order" targetId={order.id} />
     </CardShell>
   )
 }
