@@ -30,6 +30,7 @@ import type {
 const DB_KEY = 'raznorab_api_mock_db_v1'
 const SESSION_KEY = 'raznorab_api_mock_session'
 const USERS_KEY = 'raznorab_api_mock_users'
+const RESETS_KEY = 'raznorab_api_mock_resets'
 
 interface Store {
   profiles: Profile[]
@@ -120,6 +121,14 @@ function saveUsers(users: MockUser[]) {
   try { localStorage.setItem(USERS_KEY, JSON.stringify(users)) } catch { /* квота хранилища */ }
 }
 
+interface MockReset { token: string; userId: string; expiresAt: number }
+function loadResets(): MockReset[] {
+  try { return JSON.parse(localStorage.getItem(RESETS_KEY) || '[]') as MockReset[] } catch { return [] }
+}
+function saveResets(resets: MockReset[]) {
+  try { localStorage.setItem(RESETS_KEY, JSON.stringify(resets)) } catch { /* квота хранилища */ }
+}
+
 const storageFiles = new Map<string, string>()
 function fileToDataUrl(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -175,6 +184,34 @@ export const mockApi = {
     },
     logout() {
       clearSession()
+    },
+    // Демо-режим не умеет отправлять письма — ссылка для сброса вместо этого
+    // выводится в консоль браузера, чтобы восстановление пароля можно было
+    // проверить и здесь, без настоящего сервера и почты.
+    async forgotPassword(email: string) {
+      const normalized = email.trim().toLowerCase()
+      const user = loadUsers().find((u) => u.email === normalized)
+      if (user) {
+        const token = randomId()
+        const resets = loadResets().filter((r) => r.userId !== user.id)
+        resets.push({ token, userId: user.id, expiresAt: Date.now() + 60 * 60 * 1000 })
+        saveResets(resets)
+        console.info(
+          `[raznorab] Демо-режим: ссылка для сброса пароля (в реальном приложении придёт на email): ` +
+          `${window.location.origin}/auth/reset-password?token=${token}`
+        )
+      }
+    },
+    async resetPassword(token: string, password: string) {
+      const resets = loadResets()
+      const reset = resets.find((r) => r.token === token && r.expiresAt > Date.now())
+      if (!reset) throw new Error('Ссылка для сброса пароля недействительна или устарела')
+      const users = loadUsers()
+      const user = users.find((u) => u.id === reset.userId)
+      if (!user) throw new Error('Ссылка для сброса пароля недействительна или устарела')
+      user.password = password
+      saveUsers(users)
+      saveResets(resets.filter((r) => r.userId !== reset.userId))
     },
   },
 

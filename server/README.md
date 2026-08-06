@@ -31,6 +31,7 @@ sql/001_auth_credentials.sql
 ../supabase/performance_schema.sql
 ../supabase/reviews_schema.sql
 sql/003_yandex_id.sql
+sql/004_password_resets.sql
 sql/002_grants.sql
 ```
 
@@ -44,7 +45,10 @@ sql/002_grants.sql
 выполнить `grant authenticated to <имя_app_пользователя>;`). `JWT_SECRET` —
 любая длинная случайная строка. `TELEGRAM_BOT_TOKEN` — из @BotFather,
 нужен только для входа через Telegram Mini App. `S3_*` — Яндекс Object
-Storage (S3-совместимо) для фото.
+Storage (S3-совместимо) для фото. `SITE_URL`/`SMTP_*` — для писем
+восстановления пароля (см. `src/email.js`); если оставить пустыми, ссылка
+"Забыли пароль?" на сайте работает, но письмо не отправится (это будет
+видно в логах сервера).
 
 ## Локальный запуск
 

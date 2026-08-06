@@ -16,12 +16,24 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
+const forgotSchema = z.object({
+  email: z.string().email('Введите корректный email'),
+})
+
+type ForgotFormData = z.infer<typeof forgotSchema>
+
 export function WebAuthPage() {
-  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login')
   const [agreed, setAgreed] = useState(false)
+  const [forgotSent, setForgotSent] = useState(false)
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+  const {
+    register: registerForgot,
+    handleSubmit: handleSubmitForgot,
+    formState: { errors: forgotErrors, isSubmitting: forgotSubmitting },
+  } = useForm<ForgotFormData>({ resolver: zodResolver(forgotSchema) })
 
   const onSubmit = async (data: FormData) => {
     if (mode === 'register' && !agreed) {
@@ -38,6 +50,55 @@ export function WebAuthPage() {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Не удалось выполнить вход')
     }
+  }
+
+  const onSubmitForgot = async (data: ForgotFormData) => {
+    try {
+      await api.auth.forgotPassword(data.email.trim())
+      setForgotSent(true)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Не удалось отправить письмо')
+    }
+  }
+
+  if (mode === 'forgot') {
+    return (
+      <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
+        <div className="w-full max-w-sm">
+          <div className="flex flex-col items-center gap-3 mb-8">
+            <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+              <HardHat className="w-7 h-7 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-white">Стройбиржа</h1>
+          </div>
+
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl">
+            {forgotSent ? (
+              <div className="text-center py-2">
+                <p className="text-sm text-gray-300">
+                  Если такой email зарегистрирован, на него отправлено письмо со ссылкой для восстановления пароля.
+                  Проверьте почту (в том числе папку «Спам»).
+                </p>
+                <Button type="button" onClick={() => setMode('login')} className="w-full justify-center mt-5">
+                  Вернуться ко входу
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitForgot(onSubmitForgot)} className="flex flex-col gap-4">
+                <p className="text-sm text-gray-400">Введите email, указанный при регистрации — пришлём ссылку для сброса пароля.</p>
+                <Input label="Email" type="email" autoComplete="email" placeholder="master@example.com" error={forgotErrors.email?.message} {...registerForgot('email')} />
+                <Button type="submit" loading={forgotSubmitting} className="w-full justify-center mt-2" size="lg">
+                  Отправить ссылку
+                </Button>
+                <button type="button" onClick={() => setMode('login')} className="text-xs text-gray-500 hover:text-gray-300 text-center">
+                  Вернуться ко входу
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -106,6 +167,15 @@ export function WebAuthPage() {
             <Button type="submit" loading={isSubmitting} className="w-full justify-center mt-2" size="lg">
               {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
             </Button>
+            {mode === 'login' && (
+              <button
+                type="button"
+                onClick={() => setMode('forgot')}
+                className="text-xs text-gray-500 hover:text-gray-300 text-center -mt-2"
+              >
+                Забыли пароль?
+              </button>
+            )}
           </form>
 
           {yandexLoginAvailable && (

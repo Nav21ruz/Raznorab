@@ -7,6 +7,8 @@ import { verifyTelegramInitData } from '../auth/telegram.js'
 import { exchangeYandexCode } from '../auth/yandex.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { ApiError, asyncRoute } from '../errors.js'
+import { env } from '../env.js'
+import { sendPasswordResetEmail } from '../email.js'
 
 export const authRouter = Router()
 
@@ -127,6 +129,59 @@ authRouter.post('/yandex', asyncRoute(async (req, res) => {
   }
 
   res.json({ token: signToken(profile.id), profile })
+}))
+
+authRouter.post('/forgot-password', asyncRoute(async (req, res) => {
+  const email = normalizeEmail(req.body?.email)
+  const token = crypto.randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 час
+
+  // Ниже ВСЕГДА выполняются ровно два запроса, независимо от того, существует
+  // ли email — если делать это только "внутри if", по времени ответа можно
+  // было бы статистически отличить существующий email от несуществующего
+  // (лишний DELETE+INSERT занимают на пару миллисекунд больше, чем ничего).
+  // select вместо email напрямую — вложенным запросом, чтобы "несуществующий
+  // email" тоже дошёл до DELETE/INSERT с тем же планом выполнения.
+  await serviceQuery(
+    'delete from password_resets where profile_id = (select profile_id from auth_credentials where email = $1)',
+    [email]
+  )
+  // старые токены той же учётки становятся недействительны — иначе несколько
+  // ссылок из разных запросов "забыл пароль" продолжали бы работать одновременно
+  const { rows } = await serviceQuery(
+    `insert into password_resets(token, profile_id, expires_at)
+     select $1, profile_id, $2 from auth_credentials where email = $3
+     returning profile_id`,
+    [token, expiresAt, email]
+  )
+  if (rows[0]) {
+    const resetUrl = `${env.siteUrl}/auth/reset-password?token=${token}`
+    // не ждём отправку письма — иначе по времени ответа можно было бы отличить
+    // "такой email есть" (дольше, идёт SMTP) от "такого email нет" (мгновенно)
+    sendPasswordResetEmail(email, resetUrl).catch((e) => console.error('[email] не удалось отправить письмо сброса пароля:', e))
+  }
+
+  // Ответ ОДИНАКОВЫЙ независимо от того, существует ли email — иначе перебором
+  // можно было бы узнавать, кто зарегистрирован на сайте.
+  res.json({ ok: true })
+}))
+
+authRouter.post('/reset-password', asyncRoute(async (req, res) => {
+  const token = req.body?.token
+  if (typeof token !== 'string' || !token) throw new ApiError(400, 'Нет кода сброса пароля')
+  checkPassword(req.body?.password)
+
+  const { rows } = await serviceQuery(
+    'select profile_id from password_resets where token = $1 and expires_at > now()',
+    [token]
+  )
+  if (!rows[0]) throw new ApiError(400, 'Ссылка для сброса пароля недействительна или устарела')
+
+  const passwordHash = await bcrypt.hash(req.body.password, 10)
+  await serviceQuery('update auth_credentials set password_hash = $1 where profile_id = $2', [passwordHash, rows[0].profile_id])
+  await serviceQuery('delete from password_resets where profile_id = $1', [rows[0].profile_id])
+
+  res.json({ ok: true })
 }))
 
 authRouter.get('/me', requireAuth, asyncRoute(async (req, res) => {

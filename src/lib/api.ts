@@ -137,6 +137,12 @@ const realApi = {
       setToken(r.token)
       return r.profile
     },
+    async forgotPassword(email: string) {
+      await request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) })
+    },
+    async resetPassword(token: string, password: string) {
+      await request('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) })
+    },
     async me() {
       if (!getToken()) return null
       try {

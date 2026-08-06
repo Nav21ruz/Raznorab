@@ -31,4 +31,13 @@ export const env = {
     clientId: process.env.YANDEX_CLIENT_ID ?? '',
     clientSecret: process.env.YANDEX_CLIENT_SECRET ?? '',
   },
+  // Адрес сайта — нужен, чтобы вставить в письмо правильную ссылку для сброса пароля
+  siteUrl: (process.env.SITE_URL ?? '').replace(/\/$/, ''),
+  smtp: {
+    host: process.env.SMTP_HOST ?? '',
+    port: Number(process.env.SMTP_PORT ?? 587),
+    user: process.env.SMTP_USER ?? '',
+    password: process.env.SMTP_PASSWORD ?? '',
+    from: process.env.SMTP_FROM ?? process.env.SMTP_USER ?? '',
+  },
 }

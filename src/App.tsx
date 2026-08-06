@@ -32,6 +32,7 @@ import { ChatsListPage } from './pages/marketplace/ChatsListPage'
 import { ChatPage } from './pages/marketplace/ChatPage'
 import { ProfilePage } from './pages/marketplace/ProfilePage'
 import { YandexCallbackPage } from './pages/marketplace/YandexCallbackPage'
+import { ResetPasswordPage } from './pages/marketplace/ResetPasswordPage'
 import type { Profile } from './types/marketplace'
 
 // Админ-панель (недоступна без записи в таблице admins — см. supabase/moderation_schema.sql)
@@ -91,6 +92,7 @@ export default function App() {
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/auth/yandex/callback" element={<YandexCallbackPage />} />
+            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
             <Route path="/journal" element={<JournalGate />}>
               <Route index element={<ObjectsPage />} />
