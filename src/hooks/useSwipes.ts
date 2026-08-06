@@ -84,11 +84,20 @@ export function useConfirmMatch() {
         .eq('builder_id', builderId)
       if (swipeErr) throw swipeErr
 
+      // заказ переходит "в работу" — перестаёт попадать в общую ленту для других строителей
+      const { error: orderErr } = await supabase
+        .from('orders')
+        .update({ status: 'in_progress' })
+        .eq('id', orderId)
+        .eq('status', 'active')
+      if (orderErr) throw orderErr
+
       return conversation as Conversation
     },
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ['order_candidates', vars.orderId] })
       qc.invalidateQueries({ queryKey: ['conversations'] })
+      qc.invalidateQueries({ queryKey: ['orders'] })
     },
   })
 }

@@ -3,6 +3,8 @@ import { Camera, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useUploadMarketplacePhoto } from '../../hooks/useMarketplacePhotos'
 
+const MAX_FILE_SIZE = 8 * 1024 * 1024 // 8 МБ — фото с телефона обычно меньше
+
 interface Props {
   photos: string[]
   onChange: (photos: string[]) => void
@@ -21,6 +23,10 @@ export function PhotoPicker({ photos, onChange, folder, max = 6, label = 'Фот
     const toUpload = Array.from(files).slice(0, Math.max(remaining, 0))
     let current = photos
     for (const file of toUpload) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`Файл «${file.name}» больше 8 МБ — выберите фото поменьше`)
+        continue
+      }
       try {
         const url = await upload.mutateAsync({ file, folder })
         current = [...current, url]

@@ -1,5 +1,5 @@
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { Inbox, MapPin, Wallet, MessageCircle, Clock } from 'lucide-react'
+import { Inbox, MapPin, Wallet, MessageCircle, Clock, XCircle } from 'lucide-react'
 import { Spinner } from '../../components/shared/Spinner'
 import { useMyOrderResponses } from '../../hooks/useSwipes'
 import { useMyConversations } from '../../hooks/useConversations'
@@ -35,8 +35,9 @@ export function MyResponsesPage() {
       )}
 
       <div className="flex flex-col gap-3">
-        {responses?.map(({ order }) => {
+        {responses?.map(({ order, swipe }) => {
           const match = matchByOrderId.get(order.id)
+          const rejected = !match && swipe.reviewed_by_customer
           return (
             <div key={order.id} className="p-4 bg-gray-900 border border-gray-800 rounded-2xl">
               <div className="flex items-start justify-between gap-3">
@@ -62,6 +63,10 @@ export function MyResponsesPage() {
                   >
                     <MessageCircle className="w-4 h-4" /> Мэтч! Перейти в чат
                   </button>
+                ) : rejected ? (
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-gray-600 py-2">
+                    <XCircle className="w-3.5 h-3.5" /> Заказчик выбрал другого исполнителя
+                  </p>
                 ) : (
                   <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500 py-2">
                     <Clock className="w-3.5 h-3.5" /> Ожидаем ответа заказчика

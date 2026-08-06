@@ -1,5 +1,5 @@
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { Inbox, MapPin, Wallet, MessageCircle, Clock } from 'lucide-react'
+import { Inbox, MapPin, Wallet, MessageCircle, Clock, XCircle } from 'lucide-react'
 import { Spinner } from '../../components/shared/Spinner'
 import { useMyLaborResponses } from '../../hooks/useLabor'
 import { useMyConversations } from '../../hooks/useConversations'
@@ -37,6 +37,7 @@ export function MyLaborResponsesPage() {
       <div className="flex flex-col gap-3">
         {responses?.map(({ task }) => {
           const match = matchByTaskId.get(task.id)
+          const notChosen = !match && task.status === 'closed'
           return (
             <div key={task.id} className="p-4 bg-gray-900 border border-gray-800 rounded-2xl">
               <h3 className="font-semibold text-white mb-1.5">{task.title}</h3>
@@ -55,6 +56,10 @@ export function MyLaborResponsesPage() {
                   >
                     <MessageCircle className="w-4 h-4" /> Вас выбрали! Перейти в чат
                   </button>
+                ) : notChosen ? (
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-gray-600 py-2">
+                    <XCircle className="w-3.5 h-3.5" /> Заказчик выбрал другого исполнителя
+                  </p>
                 ) : (
                   <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500 py-2">
                     <Clock className="w-3.5 h-3.5" /> Ждём решения заказчика

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
 import { Plus, ClipboardList, MapPin, Wallet, Users2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Modal } from '../../components/shared/Modal'
 import { Button } from '../../components/shared/Button'
 import { Spinner } from '../../components/shared/Spinner'
@@ -100,7 +101,10 @@ function OrderRow({ order }: { order: Order }) {
 
         {order.status === 'in_progress' && (
           <button
-            onClick={() => updateStatus.mutate({ id: order.id, status: 'done' })}
+            onClick={() => updateStatus.mutate(
+              { id: order.id, status: 'done' },
+              { onError: () => toast.error('Не удалось обновить статус заказа') },
+            )}
             className="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-sm font-medium transition-colors"
           >
             Завершить
@@ -108,7 +112,10 @@ function OrderRow({ order }: { order: Order }) {
         )}
         {(order.status === 'active' || order.status === 'in_progress') && (
           <button
-            onClick={() => updateStatus.mutate({ id: order.id, status: 'cancelled' })}
+            onClick={() => updateStatus.mutate(
+              { id: order.id, status: 'cancelled' },
+              { onError: () => toast.error('Не удалось обновить статус заказа') },
+            )}
             className="px-3 py-2 rounded-xl bg-red-600/10 hover:bg-red-600/20 text-red-400 text-sm font-medium transition-colors"
           >
             Отменить

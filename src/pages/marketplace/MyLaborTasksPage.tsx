@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { Plus, Wrench, MapPin, Wallet } from 'lucide-react'
+import { Plus, Wrench, MapPin, Wallet, Users2 } from 'lucide-react'
 import { Modal } from '../../components/shared/Modal'
 import { Button } from '../../components/shared/Button'
 import { Spinner } from '../../components/shared/Spinner'
 import { LaborTaskForm } from '../../components/marketplace/LaborTaskForm'
-import { useMyLaborTasks } from '../../hooks/useLabor'
-import { PAY_TYPE_LABELS, type Profile } from '../../types/marketplace'
+import { useMyLaborTasks, useTaskResponses } from '../../hooks/useLabor'
+import { PAY_TYPE_LABELS, type LaborTask, type Profile } from '../../types/marketplace'
 
 export function MyLaborTasksPage() {
   const { profile } = useOutletContext<{ profile: Profile }>()
@@ -39,31 +39,39 @@ export function MyLaborTasksPage() {
       )}
 
       <div className="flex flex-col gap-3">
-        {tasks?.map((task) => (
-          <button
-            key={task.id}
-            onClick={() => navigate(`/labor/${task.id}`)}
-            className="p-4 bg-gray-900 border border-gray-800 rounded-2xl hover:border-gray-700 active:scale-[0.99] transition-all text-left"
-          >
-            <div className="flex items-start justify-between gap-3 mb-1.5">
-              <h3 className="font-semibold text-white">{task.title}</h3>
-              <span className={`shrink-0 px-2 py-1 rounded-lg text-xs font-medium ${task.status === 'active' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-gray-700/50 text-gray-400'}`}>
-                {task.status === 'active' ? 'Активна' : 'Закрыта'}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-3 text-xs text-gray-500">
-              {task.pay_amount && (
-                <span className="flex items-center gap-1"><Wallet className="w-3.5 h-3.5" />{task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}</span>
-              )}
-              {task.city && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{task.city}</span>}
-            </div>
-          </button>
-        ))}
+        {tasks?.map((task) => <TaskRow key={task.id} task={task} onOpen={() => navigate(`/labor/${task.id}`)} />)}
       </div>
 
       <Modal open={showForm} onClose={() => setShowForm(false)} title="Новая задача">
         <LaborTaskForm onSuccess={() => setShowForm(false)} />
       </Modal>
     </div>
+  )
+}
+
+function TaskRow({ task, onOpen }: { task: LaborTask; onOpen: () => void }) {
+  const { data: responses } = useTaskResponses(task.id)
+
+  return (
+    <button
+      onClick={onOpen}
+      className="p-4 bg-gray-900 border border-gray-800 rounded-2xl hover:border-gray-700 active:scale-[0.99] transition-all text-left"
+    >
+      <div className="flex items-start justify-between gap-3 mb-1.5">
+        <h3 className="font-semibold text-white">{task.title}</h3>
+        <span className={`shrink-0 px-2 py-1 rounded-lg text-xs font-medium ${task.status === 'active' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-gray-700/50 text-gray-400'}`}>
+          {task.status === 'active' ? 'Активна' : 'Закрыта'}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+        {task.pay_amount && (
+          <span className="flex items-center gap-1"><Wallet className="w-3.5 h-3.5" />{task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}</span>
+        )}
+        {task.city && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{task.city}</span>}
+        {!!responses?.length && (
+          <span className="flex items-center gap-1 text-orange-400"><Users2 className="w-3.5 h-3.5" />{responses.length} отклик(ов)</span>
+        )}
+      </div>
+    </button>
   )
 }

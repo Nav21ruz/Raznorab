@@ -26,16 +26,20 @@ export function LaborTaskForm({ onSuccess }: { onSuccess: () => void }) {
   })
 
   const onSubmit = async (data: FormData) => {
-    await mutateAsync({
-      title: data.title,
-      description: data.description,
-      city: data.city || null,
-      pay_amount: data.pay_amount ? Number(data.pay_amount) : null,
-      pay_type: data.pay_type,
-      date_needed: data.date_needed || null,
-    })
-    toast.success('Задача опубликована')
-    onSuccess()
+    try {
+      await mutateAsync({
+        title: data.title,
+        description: data.description,
+        city: data.city || null,
+        pay_amount: data.pay_amount ? Number(data.pay_amount) : null,
+        pay_type: data.pay_type,
+        date_needed: data.date_needed || null,
+      })
+      toast.success('Задача опубликована')
+      onSuccess()
+    } catch {
+      toast.error('Не удалось опубликовать задачу')
+    }
   }
 
   return (

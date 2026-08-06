@@ -88,18 +88,23 @@ export function OnboardingPage() {
       return
     }
 
-    await updateProfile.mutateAsync({ role, first_name: data.first_name, city: data.city, phone: data.phone })
+    try {
+      await updateProfile.mutateAsync({ role, first_name: data.first_name, city: data.city, phone: data.phone })
 
-    if (role === 'builder') {
-      await upsertBuilder.mutateAsync({
-        specialties,
-        experience_years: data.experience_years ? Number(data.experience_years) : null,
-        price_from: data.price_from ? Number(data.price_from) : null,
-        price_to: data.price_to ? Number(data.price_to) : null,
-        about: data.about || null,
-        portfolio_photos: [],
-        is_active: true,
-      })
+      if (role === 'builder') {
+        await upsertBuilder.mutateAsync({
+          specialties,
+          experience_years: data.experience_years ? Number(data.experience_years) : null,
+          price_from: data.price_from ? Number(data.price_from) : null,
+          price_to: data.price_to ? Number(data.price_to) : null,
+          about: data.about || null,
+          portfolio_photos: [],
+          is_active: true,
+        })
+      }
+    } catch {
+      toast.error('Не удалось сохранить профиль, попробуйте ещё раз')
+      return
     }
 
     toast.success('Профиль готов!')

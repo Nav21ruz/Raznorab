@@ -27,18 +27,22 @@ export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
-    await mutateAsync({
-      category: data.category,
-      title: data.title,
-      description: data.description,
-      budget_from: data.budget_from ? Number(data.budget_from) : null,
-      budget_to: data.budget_to ? Number(data.budget_to) : null,
-      city: data.city || null,
-      address: data.address || null,
-      photos,
-    })
-    toast.success('Заказ опубликован')
-    onSuccess()
+    try {
+      await mutateAsync({
+        category: data.category,
+        title: data.title,
+        description: data.description,
+        budget_from: data.budget_from ? Number(data.budget_from) : null,
+        budget_to: data.budget_to ? Number(data.budget_to) : null,
+        city: data.city || null,
+        address: data.address || null,
+        photos,
+      })
+      toast.success('Заказ опубликован')
+      onSuccess()
+    } catch {
+      toast.error('Не удалось опубликовать заказ')
+    }
   }
 
   return (

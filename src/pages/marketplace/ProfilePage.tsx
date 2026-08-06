@@ -32,8 +32,12 @@ export function ProfilePage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    await updateProfile.mutateAsync(data)
-    toast.success('Профиль обновлён')
+    try {
+      await updateProfile.mutateAsync(data)
+      toast.success('Профиль обновлён')
+    } catch {
+      toast.error('Не удалось сохранить профиль')
+    }
   }
 
   return (
@@ -56,7 +60,13 @@ export function ProfilePage() {
             return (
               <button
                 key={r}
-                onClick={() => updateProfile.mutate({ role: r }, { onSuccess: () => toast.success(`Роль изменена: ${ROLE_LABELS[r]}`) })}
+                onClick={() => updateProfile.mutate(
+                  { role: r },
+                  {
+                    onSuccess: () => toast.success(`Роль изменена: ${ROLE_LABELS[r]}`),
+                    onError: () => toast.error('Не удалось изменить роль'),
+                  },
+                )}
                 className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700'}`}
               >
                 <Icon className="w-5 h-5" />
@@ -114,16 +124,20 @@ function BuilderProfileForm({ builderId, builderProfile }: { builderId: string; 
       toast.error('Выберите хотя бы одну специализацию')
       return
     }
-    await upsertBuilder.mutateAsync({
-      specialties,
-      experience_years: data.experience_years ? Number(data.experience_years) : null,
-      price_from: data.price_from ? Number(data.price_from) : null,
-      price_to: data.price_to ? Number(data.price_to) : null,
-      about: data.about || null,
-      portfolio_photos: portfolioPhotos,
-      is_active: true,
-    })
-    toast.success('Профиль строителя обновлён')
+    try {
+      await upsertBuilder.mutateAsync({
+        specialties,
+        experience_years: data.experience_years ? Number(data.experience_years) : null,
+        price_from: data.price_from ? Number(data.price_from) : null,
+        price_to: data.price_to ? Number(data.price_to) : null,
+        about: data.about || null,
+        portfolio_photos: portfolioPhotos,
+        is_active: true,
+      })
+      toast.success('Профиль строителя обновлён')
+    } catch {
+      toast.error('Не удалось сохранить профиль строителя')
+    }
   }
 
   return (

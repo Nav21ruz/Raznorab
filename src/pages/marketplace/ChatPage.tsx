@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
 import { Send, ArrowLeft, User } from 'lucide-react'
+import { toast } from 'sonner'
 import { useConversation, useMessages, useSendMessage } from '../../hooks/useConversations'
 import { useProfileById } from '../../hooks/useProfile'
 import { useOrder } from '../../hooks/useOrders'
@@ -31,7 +32,12 @@ export function ChatPage() {
     const trimmed = text.trim()
     if (!trimmed) return
     setText('')
-    sendMessage.mutate(trimmed)
+    sendMessage.mutate(trimmed, {
+      onError: () => {
+        toast.error('Не удалось отправить сообщение')
+        setText(trimmed)
+      },
+    })
   }
 
   const contextTitle = order?.title ?? laborTask?.title
