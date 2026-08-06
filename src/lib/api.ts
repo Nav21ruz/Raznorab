@@ -12,6 +12,7 @@ import type {
   Report,
   ReportStatus,
   ReportTargetType,
+  Review,
   Role,
   SwipeDirection,
 } from '../types/marketplace'
@@ -317,6 +318,25 @@ const realApi = {
         body: JSON.stringify({ text }),
       })
       return r.message
+    },
+    async myReview(id: string) {
+      const r = await request<{ review: Review | null }>(`/conversations/${id}/my-review`)
+      return r.review
+    },
+    async createReview(id: string, rating: number, comment?: string) {
+      const r = await request<{ review: Review }>(`/conversations/${id}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ rating, comment }),
+      })
+      return r.review
+    },
+  },
+
+  reviews: {
+    async forProfile(profileId: string) {
+      return request<{ reviews: (Review & { reviewerName: string; reviewerPhoto: string | null })[]; average: number | null; count: number }>(
+        `/profiles/${profileId}/reviews`
+      )
     },
   },
 

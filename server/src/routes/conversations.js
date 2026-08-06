@@ -72,3 +72,33 @@ conversationsRouter.post('/:id/messages', asyncRoute(async (req, res) => {
   if (!rows[0]) throw new ApiError(403, 'Нет доступа к этому чату')
   res.status(201).json({ message: rows[0] })
 }))
+
+// Отзыв о собеседнике этой переписки — reviewee вычисляется на сервере (второй
+// участник), а не берётся из тела запроса, чтобы нельзя было подделать, кого хвалим/ругаем.
+conversationsRouter.post('/:id/review', asyncRoute(async (req, res) => {
+  const rating = Number(req.body?.rating)
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) throw new ApiError(400, 'Оценка должна быть от 1 до 5')
+  const comment = typeof req.body?.comment === 'string' ? req.body.comment.trim() || null : null
+
+  const review = await withUserContext(req.userId, async (c) => {
+    const { rows: convRows } = await c.query('select * from conversations where id = $1', [req.params.id])
+    const conv = convRows[0]
+    if (!conv) return null
+    const revieweeId = conv.customer_id === req.userId ? conv.worker_id : conv.customer_id
+    const { rows } = await c.query(
+      `insert into reviews(conversation_id, reviewer_id, reviewee_id, rating, comment)
+       values ($1, $2, $3, $4, $5) returning *`,
+      [req.params.id, req.userId, revieweeId, rating, comment]
+    )
+    return rows[0]
+  })
+  if (!review) throw new ApiError(404, 'Чат не найден')
+  res.status(201).json({ review })
+}))
+
+conversationsRouter.get('/:id/my-review', asyncRoute(async (req, res) => {
+  const { rows } = await withUserContext(req.userId, (c) =>
+    c.query('select * from reviews where conversation_id = $1 and reviewer_id = $2', [req.params.id, req.userId])
+  )
+  res.json({ review: rows[0] ?? null })
+}))

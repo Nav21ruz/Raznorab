@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom'
-import { Send, ArrowLeft, User, Flag } from 'lucide-react'
+import { Send, ArrowLeft, User, Flag, Star } from 'lucide-react'
 import { toast } from 'sonner'
 import { useConversation, useMessages, useSendMessage } from '../../hooks/useConversations'
 import { useProfileById } from '../../hooks/useProfile'
 import { useOrder } from '../../hooks/useOrders'
 import { useLaborTask } from '../../hooks/useLabor'
 import { useBannedWords } from '../../hooks/useModeration'
+import { useMyReview } from '../../hooks/useReviews'
 import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { Spinner } from '../../components/shared/Spinner'
 import { ReportModal } from '../../components/marketplace/ReportModal'
+import { ReviewModal } from '../../components/marketplace/ReviewModal'
 import type { Profile } from '../../types/marketplace'
 
 export function ChatPage() {
@@ -22,10 +24,12 @@ export function ChatPage() {
   const { data: bannedWords } = useBannedWords()
   const [text, setText] = useState('')
   const [showReport, setShowReport] = useState(false)
+  const [showReview, setShowReview] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const peerId = conversation ? (conversation.customer_id === profile.id ? conversation.worker_id : conversation.customer_id) : undefined
   const { data: peer } = useProfileById(peerId)
+  const { data: myReview, isLoading: myReviewLoading } = useMyReview(id)
   const { data: order } = useOrder(conversation?.kind === 'order' ? conversation.order_id ?? undefined : undefined)
   const { data: laborTask } = useLaborTask(conversation?.kind === 'labor' ? conversation.labor_task_id ?? undefined : undefined)
 
@@ -62,6 +66,11 @@ export function ChatPage() {
           <p className="font-semibold text-white text-sm truncate">{peer ? `${peer.first_name} ${peer.last_name ?? ''}`.trim() : '…'}</p>
           {contextTitle && <p className="text-xs text-gray-500 truncate">{contextTitle}</p>}
         </div>
+        {peer && !myReviewLoading && !myReview && (
+          <button onClick={() => setShowReview(true)} className="p-2 text-gray-500 hover:text-orange-400 shrink-0" aria-label="Оставить отзыв">
+            <Star className="w-4 h-4" />
+          </button>
+        )}
         {peer && (
           <button onClick={() => setShowReport(true)} className="p-2 -mr-1 text-gray-500 hover:text-red-400 shrink-0" aria-label="Пожаловаться на пользователя">
             <Flag className="w-4 h-4" />
@@ -106,7 +115,17 @@ export function ChatPage() {
       </div>
 
       {peer && (
-        <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="profile" targetId={peer.id} />
+        <>
+          <ReportModal open={showReport} onClose={() => setShowReport(false)} targetType="profile" targetId={peer.id} />
+          {id && (
+            <ReviewModal
+              open={showReview}
+              onClose={() => setShowReview(false)}
+              conversationId={id}
+              peerName={`${peer.first_name} ${peer.last_name ?? ''}`.trim()}
+            />
+          )}
+        </>
       )}
     </div>
   )

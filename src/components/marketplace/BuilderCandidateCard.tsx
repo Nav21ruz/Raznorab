@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Wallet, Clock, User, Flag } from 'lucide-react'
 import { CardShell } from './CardShell'
 import { ReportModal } from './ReportModal'
+import { RatingBadge } from './RatingBadge'
 import type { BuilderProfile, Profile } from '../../types/marketplace'
 
 function formatPrice(bp: BuilderProfile) {
@@ -38,7 +39,10 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
         <div>
           <h3 className="text-lg font-bold text-white leading-snug">{profile.first_name} {profile.last_name}</h3>
-          {profile.city && <p className="text-sm text-gray-500">{profile.city}</p>}
+          <div className="flex items-center gap-2 mt-0.5">
+            {profile.city && <p className="text-sm text-gray-500">{profile.city}</p>}
+            <RatingBadge profileId={profile.id} />
+          </div>
         </div>
 
         {builderProfile && (

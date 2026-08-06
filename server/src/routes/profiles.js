@@ -30,6 +30,29 @@ profilesRouter.get('/:id', asyncRoute(async (req, res) => {
   res.json({ profile: rows[0] })
 }))
 
+profilesRouter.get('/:id/reviews', asyncRoute(async (req, res) => {
+  const { rows, summaryRows } = await withUserContext(req.userId, async (c) => {
+    const { rows } = await c.query(
+      `select row_to_json(r) as review, row_to_json(p) as reviewer
+       from reviews r
+       join profiles p on p.id = r.reviewer_id
+       where r.reviewee_id = $1
+       order by r.created_at desc`,
+      [req.params.id]
+    )
+    const { rows: summaryRows } = await c.query(
+      `select avg(rating)::numeric(10,2) as average, count(*) as count from reviews where reviewee_id = $1`,
+      [req.params.id]
+    )
+    return { rows, summaryRows }
+  })
+  res.json({
+    reviews: rows.map((r) => ({ ...r.review, reviewerName: `${r.reviewer.first_name} ${r.reviewer.last_name ?? ''}`.trim() || 'Пользователь', reviewerPhoto: r.reviewer.photo_url })),
+    average: summaryRows[0].average ? Number(summaryRows[0].average) : null,
+    count: Number(summaryRows[0].count),
+  })
+}))
+
 profilesRouter.patch('/me', asyncRoute(async (req, res) => {
   const sets = []
   const values = []

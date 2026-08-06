@@ -29,6 +29,7 @@ sql/000_auth_compat.sql
 ../supabase/moderation_schema.sql
 sql/001_auth_credentials.sql
 ../supabase/performance_schema.sql
+../supabase/reviews_schema.sql
 sql/003_yandex_id.sql
 sql/002_grants.sql
 ```

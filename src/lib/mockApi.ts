@@ -23,6 +23,7 @@ import type {
   Report,
   ReportStatus,
   ReportTargetType,
+  Review,
   SwipeDirection,
 } from '../types/marketplace'
 
@@ -43,6 +44,7 @@ interface Store {
   banned_users: BannedUser[]
   banned_words: BannedWord[]
   admins: string[]
+  reviews: Review[]
 }
 
 function seedStore(): Store {
@@ -74,6 +76,7 @@ function seedStore(): Store {
     banned_users: [],
     banned_words: [],
     admins: [],
+    reviews: [],
   }
 }
 
@@ -388,6 +391,38 @@ export const mockApi = {
       db.messages.push(message)
       persist()
       return message
+    },
+    async myReview(id: string) {
+      const uid = requireSession()
+      return db.reviews.find((r) => r.conversation_id === id && r.reviewer_id === uid) ?? null
+    },
+    async createReview(id: string, rating: number, comment?: string) {
+      const uid = requireSession()
+      const conv = db.conversations.find((c) => c.id === id)
+      if (!conv) throw new Error('Чат не найден')
+      if (db.reviews.some((r) => r.conversation_id === id && r.reviewer_id === uid)) {
+        throw new Error('Такая запись уже существует')
+      }
+      const revieweeId = conv.customer_id === uid ? conv.worker_id : conv.customer_id
+      const review: Review = { id: randomId(), conversation_id: id, reviewer_id: uid, reviewee_id: revieweeId, rating, comment: comment ?? null, created_at: new Date().toISOString() }
+      db.reviews.push(review)
+      persist()
+      return review
+    },
+  },
+
+  reviews: {
+    async forProfile(profileId: string) {
+      const mine = db.reviews.filter((r) => r.reviewee_id === profileId).sort((a, b) => b.created_at.localeCompare(a.created_at))
+      const average = mine.length ? mine.reduce((sum, r) => sum + r.rating, 0) / mine.length : null
+      return {
+        reviews: mine.map((r) => {
+          const reviewer = db.profiles.find((p) => p.id === r.reviewer_id)
+          return { ...r, reviewerName: reviewer ? `${reviewer.first_name} ${reviewer.last_name ?? ''}`.trim() : 'Пользователь', reviewerPhoto: reviewer?.photo_url ?? null }
+        }),
+        average,
+        count: mine.length,
+      }
     },
   },
 

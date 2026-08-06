@@ -53,8 +53,9 @@ Supabase (зарубежный сервис) все данные — регис�
     3) supabase/moderation_schema.sql
     4) server/sql/001_auth_credentials.sql
     5) supabase/performance_schema.sql
-    6) server/sql/003_yandex_id.sql
-    7) server/sql/002_grants.sql
+    6) supabase/reviews_schema.sql
+    7) server/sql/003_yandex_id.sql
+    8) server/sql/002_grants.sql
 
 Откройте каждый файл текстовым редактором, скопируйте содержимое целиком,
 вставьте в окно SQL-запросов и выполните. Если где-то будет ошибка —

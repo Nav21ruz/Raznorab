@@ -72,6 +72,16 @@ export interface Message {
   created_at: string
 }
 
+export interface Review {
+  id: string
+  conversation_id: string
+  reviewer_id: string
+  reviewee_id: string
+  rating: number
+  comment: string | null
+  created_at: string
+}
+
 export type PayType = 'per_task' | 'per_day' | 'per_hour'
 
 export interface LaborTask {
