@@ -4,7 +4,7 @@ import { createMockClient } from './mockSupabase'
 declare global {
   interface Window {
     // Полная форма объявлена здесь и в lib/api.ts — оба поля читает Журнал объекта
-    // (Supabase), API_URL — Стройбиржа (свой сервер). Типы должны совпадать дословно,
+    // (Supabase), API_URL — Briggo (свой сервер). Типы должны совпадать дословно,
     // иначе TypeScript не сможет объединить два declare global для одного Window.
     __APP_CONFIG__?: { SUPABASE_URL?: string; SUPABASE_ANON_KEY?: string; API_URL?: string; YANDEX_CLIENT_ID?: string }
   }

@@ -25,7 +25,7 @@ export function LandingPage() {
           <div className="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
             <HardHat className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white">Стройбиржа</h1>
+          <h1 className="text-3xl font-bold text-white">Briggo</h1>
           <p className="text-gray-400">Заказы на стройку и разовые подработки — заказчики и исполнители находят друг друга здесь</p>
         </div>
 

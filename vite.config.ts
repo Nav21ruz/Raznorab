@@ -19,8 +19,8 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
         manifest: {
-          name: 'Стройбиржа — заказы и подработки',
-          short_name: 'Стройбиржа',
+          name: 'Briggo — заказы и подработки',
+          short_name: 'Briggo',
           description: 'Биржа для стройки: заказчики, строители и разнорабочие находят друг друга',
           lang: 'ru',
           start_url: base,

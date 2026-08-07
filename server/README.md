@@ -1,4 +1,4 @@
-# Raznorab API — сервер для Стройбиржи (без Supabase)
+# Raznorab API — сервер для Briggo (без Supabase)
 
 Небольшой Node.js/Express-сервер, который заменяет Supabase: авторизация
 (email/пароль + вход через Telegram), заказы, разнорабочие, чат (опросом,

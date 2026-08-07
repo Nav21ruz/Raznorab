@@ -44,7 +44,7 @@ export function ResetPasswordPage() {
           <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
             <HardHat className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Стройбиржа</h1>
+          <h1 className="text-2xl font-bold text-white">Briggo</h1>
         </div>
 
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl">

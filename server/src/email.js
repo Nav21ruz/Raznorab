@@ -28,7 +28,7 @@ export async function sendPasswordResetEmail(toEmail, resetUrl) {
   await t.sendMail({
     from: env.smtp.from,
     to: toEmail,
-    subject: 'Восстановление пароля — Стройбиржа',
+    subject: 'Восстановление пароля — Briggo',
     text: `Для сброса пароля перейдите по ссылке (действует 1 час): ${resetUrl}\n\nЕсли вы не запрашивали сброс пароля — просто проигнорируйте это письмо.`,
     html: `<p>Для сброса пароля перейдите по ссылке (действует 1 час):</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>Если вы не запрашивали сброс пароля — просто проигнорируйте это письмо.</p>`,
   })

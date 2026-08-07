@@ -16,7 +16,7 @@ const EntryDetailPage = lazy(() => import('./pages/EntryDetailPage').then((m) =>
 const SharePage = lazy(() => import('./pages/SharePage').then((m) => ({ default: m.SharePage })))
 const StatsPage = lazy(() => import('./pages/StatsPage').then((m) => ({ default: m.StatsPage })))
 
-// Стройбиржа: заказчики, строители, разнорабочие
+// Briggo: заказчики, строители, разнорабочие
 import { AuthGate } from './components/marketplace/AuthGate'
 import { MarketplaceShell } from './components/marketplace/MarketplaceShell'
 import { OnboardingPage } from './pages/marketplace/OnboardingPage'
