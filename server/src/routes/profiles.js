@@ -13,18 +13,35 @@ function parseIds(raw) {
   return String(raw ?? '').split(',').map((s) => s.trim()).filter(Boolean)
 }
 
+// profiles читаются публично (нужно для лент/свайпов), но телефон — не общедоступные
+// данные: его видно только самому владельцу и тем, с кем уже есть подтверждённый
+// мэтч (общий чат в conversations). Иначе любой авторизованный пользователь мог бы
+// пройтись по всем orders/labor_tasks и собрать телефоны всех заказчиков и исполнителей.
+const PUBLIC_PROFILE_COLUMNS = `
+  id, telegram_id, telegram_username, first_name, last_name, photo_url, city, role, created_at,
+  case
+    when profiles.id = $1 or exists (
+      select 1 from conversations c
+      where (c.customer_id = $1 and c.worker_id = profiles.id)
+         or (c.worker_id = $1 and c.customer_id = profiles.id)
+    )
+    then phone
+    else null
+  end as phone
+`
+
 profilesRouter.get('/', asyncRoute(async (req, res) => {
   const ids = parseIds(req.query.ids)
   if (!ids.length) return res.json({ profiles: [] })
   const { rows } = await withUserContext(req.userId, (c) =>
-    c.query('select * from profiles where id = any($1::uuid[])', [ids])
+    c.query(`select ${PUBLIC_PROFILE_COLUMNS} from profiles where id = any($2::uuid[])`, [req.userId, ids])
   )
   res.json({ profiles: rows })
 }))
 
 profilesRouter.get('/:id', asyncRoute(async (req, res) => {
   const { rows } = await withUserContext(req.userId, (c) =>
-    c.query('select * from profiles where id = $1', [req.params.id])
+    c.query(`select ${PUBLIC_PROFILE_COLUMNS} from profiles where id = $2`, [req.userId, req.params.id])
   )
   if (!rows[0]) throw new ApiError(404, 'Профиль не найден')
   res.json({ profile: rows[0] })

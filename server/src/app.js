@@ -13,6 +13,10 @@ import { uploadsRouter } from './routes/uploads.js'
 import { ApiError } from './errors.js'
 
 export const app = express()
+// За приложением всегда стоит один обратный прокси (шлюз Яндекс.Облака, Render
+// и т.п.) — без этого req.ip был бы адресом самого прокси у ВСЕХ запросов сразу,
+// и ограничение частоты запросов (см. routes/auth.js) считало бы всех одним человеком.
+app.set('trust proxy', 1)
 app.use(cors({ origin: env.corsOrigin }))
 app.use(express.json({ limit: '1mb' }))
 

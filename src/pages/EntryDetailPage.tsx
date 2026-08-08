@@ -25,7 +25,7 @@ export function EntryDetailPage() {
   if (!data) return null
 
   const entry = data
-  const workers: EntryWorker[] = (data as any).entry_workers ?? []
+  const workers: EntryWorker[] = data.entry_workers ?? []
   const weather = WEATHER_LABELS[entry.weather as keyof typeof WEATHER_LABELS] ?? entry.weather
   const totalHours = workers.reduce((s, w) => s + w.hours, 0)
 

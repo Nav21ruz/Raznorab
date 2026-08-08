@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import type { Entry, EntryWorker } from '../types'
+import type { Entry, EntryPhoto, EntryWorker } from '../types'
+
+export type EntryWithDetails = Entry & { entry_workers: EntryWorker[]; entry_photos: EntryPhoto[] }
 
 export function useEntries(objectId: string) {
   return useQuery({
@@ -28,7 +30,7 @@ export function useEntry(id: string) {
         .eq('id', id)
         .single()
       if (error) throw error
-      return data
+      return data as EntryWithDetails
     },
     enabled: !!id,
   })

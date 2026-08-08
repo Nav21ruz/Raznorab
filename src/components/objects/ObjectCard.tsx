@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Calendar, ChevronRight, Trash2, FileText } from 'lucide-react'
 import { toast } from 'sonner'
@@ -12,6 +13,9 @@ interface Props {
 
 export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
   const { mutate: deleteObject } = useDeleteObject()
+  // лениво захватываем "сейчас" один раз при монтировании — Date.now() нельзя
+  // вызывать прямо в теле рендера (правило react-hooks/purity)
+  const [now] = useState(() => Date.now())
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -22,7 +26,7 @@ export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
   }
 
   const daysSinceStart = Math.floor(
-    (Date.now() - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)
+    (now - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)
   )
 
   return (

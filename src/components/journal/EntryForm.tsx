@@ -59,6 +59,7 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
   }
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- resolver cast above (zod preprocess/coerce) makes RHF's inferred submit handler type mismatch
     <form onSubmit={handleSubmit(handleFormSubmit as any)} className="flex flex-col gap-6">
       <div className="grid grid-cols-2 gap-4">
         <Input label="Дата" type="date" error={errors.date?.message} {...register('date')} />

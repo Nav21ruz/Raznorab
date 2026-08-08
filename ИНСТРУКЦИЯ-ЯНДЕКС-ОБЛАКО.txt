@@ -57,7 +57,8 @@ Supabase (зарубежный сервис) все данные — регис�
     7) server/sql/003_yandex_id.sql
     8) server/sql/004_password_resets.sql
     9) server/sql/005_notifications.sql
-    10) server/sql/002_grants.sql
+    10) server/sql/006_ban_builder_profiles.sql
+    11) server/sql/002_grants.sql
 
 Откройте каждый файл текстовым редактором, скопируйте содержимое целиком,
 вставьте в окно SQL-запросов и выполните. Если где-то будет ошибка —

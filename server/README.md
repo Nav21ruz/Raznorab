@@ -33,6 +33,7 @@ sql/001_auth_credentials.sql
 sql/003_yandex_id.sql
 sql/004_password_resets.sql
 sql/005_notifications.sql
+sql/006_ban_builder_profiles.sql
 sql/002_grants.sql
 ```
 

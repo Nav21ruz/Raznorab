@@ -23,6 +23,9 @@ export function ObjectDetailPage() {
   const [showShare, setShowShare] = useState(false)
   const [showPDF, setShowPDF] = useState(false)
   const [copied, setCopied] = useState(false)
+  // лениво захватываем "сейчас" один раз при монтировании — Date.now() нельзя
+  // вызывать прямо в теле рендера (правило react-hooks/purity)
+  const [now] = useState(() => Date.now())
 
   const generateShareLink = async () => {
     const token = randomId()
@@ -46,7 +49,7 @@ export function ObjectDetailPage() {
   if (objLoading) return <><Navbar /><Spinner className="mt-24" /></>
 
   const totalDays = entries?.length ?? 0
-  const daysSinceStart = object ? Math.floor((Date.now() - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)) : 0
+  const daysSinceStart = object ? Math.floor((now - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)) : 0
 
   return (
     <div className="min-h-screen bg-gray-950">

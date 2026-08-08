@@ -6,13 +6,26 @@ import { ApiError, asyncRoute } from '../errors.js'
 export const adminRouter = Router()
 adminRouter.use(requireAuth)
 
-// Кто именно админ и что ему видно — решает RLS (см. supabase/moderation_schema.sql),
-// не эти маршруты: обычный пользователь получит просто 0 строк на все запросы ниже.
-adminRouter.get('/check', asyncRoute(async (req, res) => {
-  const { rows } = await withUserContext(req.userId, (c) =>
-    c.query('select 1 from admins where profile_id = $1', [req.userId])
+async function isAdmin(userId) {
+  const { rows } = await withUserContext(userId, (c) =>
+    c.query('select 1 from admins where profile_id = $1', [userId])
   )
-  res.json({ isAdmin: rows.length > 0 })
+  return rows.length > 0
+}
+
+// Оставляем ДО requireAdmin ниже — этим маршрутом пользуется сам клиент, чтобы
+// решить, показывать ли ссылку на /admin, и он должен отвечать 200 всем вошедшим.
+adminRouter.get('/check', asyncRoute(async (req, res) => {
+  res.json({ isAdmin: await isAdmin(req.userId) })
+}))
+
+// Ниже — RLS (см. supabase/moderation_schema.sql) действительно не даст чужому
+// пользователю изменить/удалить чужие данные, но она не мешает SELECT'у как
+// таковому: например, "profiles are publicly readable" отдаст `select *`
+// (в т.ч. телефон) кому угодно, если не проверить админство здесь же, до запроса.
+adminRouter.use(asyncRoute(async (req, res, next) => {
+  if (!(await isAdmin(req.userId))) throw new ApiError(403, 'Недостаточно прав')
+  next()
 }))
 
 // count(*) вместо выкачивания всей таблицы на клиент ради длины массива.

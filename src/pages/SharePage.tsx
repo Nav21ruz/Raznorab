@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { HardHat, MapPin, Calendar, Users, Camera, Lock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getPhotoUrl } from '../hooks/usePhotos'
+import type { EntryWithDetails as RawEntryWithDetails } from '../hooks/useEntries'
 import { WEATHER_LABELS } from '../types'
 import type { ConstructionObject, Entry, EntryWorker, EntryPhoto } from '../types'
 import { Spinner } from '../components/shared/Spinner'
@@ -39,7 +40,7 @@ export function SharePage() {
         .eq('object_id', obj.id)
         .order('date', { ascending: false })
 
-      setEntries((entriesData ?? []).map((e: any) => ({
+      setEntries(((entriesData ?? []) as RawEntryWithDetails[]).map((e) => ({
         entry: e,
         workers: e.entry_workers ?? [],
         photos: e.entry_photos ?? [],

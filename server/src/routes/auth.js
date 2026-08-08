@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
 import bcrypt from 'bcryptjs'
+import rateLimit from 'express-rate-limit'
 import { serviceQuery, serviceTx, withUserContext } from '../db.js'
 import { signToken } from '../auth/jwt.js'
 import { verifyTelegramInitData } from '../auth/telegram.js'
@@ -11,6 +12,17 @@ import { env } from '../env.js'
 import { sendPasswordResetEmail } from '../email.js'
 
 export const authRouter = Router()
+
+// Ограничения только на чувствительные точки входа (подбор пароля, спам-регистрация,
+// рассылка писем сброса) — не на весь /auth, чтобы не мешать обычному использованию.
+// В памяти процесса: на одном постоянном сервере (VPS, Render) работает как надо, на
+// serverless (Yandex Cloud Functions) — best-effort в рамках одного тёплого контейнера,
+// это всё равно лучше, чем совсем без защиты.
+const authLimitMessage = { error: 'Слишком много попыток. Попробуйте снова через несколько минут.' }
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false, message: authLimitMessage })
+const registerLimiter = rateLimit({ windowMs: 60 * 60 * 1000, limit: 8, standardHeaders: true, legacyHeaders: false, message: authLimitMessage })
+const forgotPasswordLimiter = rateLimit({ windowMs: 60 * 60 * 1000, limit: 4, standardHeaders: true, legacyHeaders: false, message: authLimitMessage })
+const resetPasswordLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false, message: authLimitMessage })
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -34,7 +46,7 @@ async function fetchProfile(profileId) {
   return rows[0] ?? null
 }
 
-authRouter.post('/register', asyncRoute(async (req, res) => {
+authRouter.post('/register', registerLimiter, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body?.email)
   checkPassword(req.body.password)
 
@@ -60,7 +72,7 @@ authRouter.post('/register', asyncRoute(async (req, res) => {
   res.status(201).json({ token: signToken(profileId), profile })
 }))
 
-authRouter.post('/login', asyncRoute(async (req, res) => {
+authRouter.post('/login', loginLimiter, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body?.email)
   if (typeof req.body?.password !== 'string') throw new ApiError(400, 'Введите пароль')
 
@@ -131,7 +143,7 @@ authRouter.post('/yandex', asyncRoute(async (req, res) => {
   res.json({ token: signToken(profile.id), profile })
 }))
 
-authRouter.post('/forgot-password', asyncRoute(async (req, res) => {
+authRouter.post('/forgot-password', forgotPasswordLimiter, asyncRoute(async (req, res) => {
   const email = normalizeEmail(req.body?.email)
   const token = crypto.randomBytes(32).toString('hex')
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 час
@@ -166,7 +178,7 @@ authRouter.post('/forgot-password', asyncRoute(async (req, res) => {
   res.json({ ok: true })
 }))
 
-authRouter.post('/reset-password', asyncRoute(async (req, res) => {
+authRouter.post('/reset-password', resetPasswordLimiter, asyncRoute(async (req, res) => {
   const token = req.body?.token
   if (typeof token !== 'string' || !token) throw new ApiError(400, 'Нет кода сброса пароля')
   checkPassword(req.body?.password)
