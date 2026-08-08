@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { HardHat, Users, Wrench, Info, LogOut } from 'lucide-react'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
+import { Modal } from '../../components/shared/Modal'
 import { PhotoPicker } from '../../components/marketplace/PhotoPicker'
 import { useBuilderProfile, useUpdateProfile, useUpsertBuilderProfile } from '../../hooks/useProfile'
 import { useBannedWords } from '../../hooks/useModeration'
@@ -27,11 +28,28 @@ type FormData = z.infer<typeof schema>
 export function ProfilePage() {
   const { profile } = useOutletContext<{ profile: Profile }>()
   const updateProfile = useUpdateProfile()
+  // Роль определяет, какие разделы видны в нижнем меню и как вас видят другие
+  // участники — переключение в один клик слишком легко нажать случайно,
+  // поэтому спрашиваем подтверждение, прежде чем менять.
+  const [pendingRole, setPendingRole] = useState<Role | null>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { first_name: profile.first_name, city: profile.city ?? '', phone: profile.phone ?? '' },
   })
+
+  const confirmRoleChange = () => {
+    if (!pendingRole) return
+    const role = pendingRole
+    updateProfile.mutate(
+      { role },
+      {
+        onSuccess: () => toast.success(`Роль изменена: ${ROLE_LABELS[role]}`),
+        onError: () => toast.error('Не удалось изменить роль'),
+      },
+    )
+    setPendingRole(null)
+  }
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -62,13 +80,7 @@ export function ProfilePage() {
             return (
               <button
                 key={r}
-                onClick={() => updateProfile.mutate(
-                  { role: r },
-                  {
-                    onSuccess: () => toast.success(`Роль изменена: ${ROLE_LABELS[r]}`),
-                    onError: () => toast.error('Не удалось изменить роль'),
-                  },
-                )}
+                onClick={() => { if (!active) setPendingRole(r) }}
                 className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700'}`}
               >
                 <Icon className="w-5 h-5" />
@@ -100,6 +112,21 @@ export function ProfilePage() {
         {' · '}
         <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
       </p>
+
+      <Modal open={pendingRole !== null} onClose={() => setPendingRole(null)} title="Сменить роль?">
+        {pendingRole && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-gray-300">
+              Роль станет «{ROLE_LABELS[pendingRole]}» — изменится набор разделов в нижнем меню и то, в каком виде вас видят другие
+              пользователи. Уже собранные данные (например, анкета строителя) не удаляются — если вернётесь к прежней роли, всё будет на месте.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="secondary" className="flex-1 justify-center" onClick={() => setPendingRole(null)}>Отмена</Button>
+              <Button className="flex-1 justify-center" loading={updateProfile.isPending} onClick={confirmRoleChange}>Сменить роль</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
