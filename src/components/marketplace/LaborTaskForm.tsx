@@ -60,7 +60,7 @@ export function LaborTaskForm({ onSuccess }: { onSuccess: () => void }) {
         <textarea
           {...register('description')}
           rows={3}
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
           placeholder="Что нужно сделать, сколько человек, на сколько времени"
         />
         {errors.description && <p className="text-xs text-red-400">{errors.description.message}</p>}
@@ -72,7 +72,7 @@ export function LaborTaskForm({ onSuccess }: { onSuccess: () => void }) {
           <label className="text-sm font-medium text-gray-400">Тип оплаты</label>
           <select
             {...register('pay_type')}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
           >
             {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((pt) => (
               <option key={pt} value={pt}>{PAY_TYPE_LABELS[pt]}</option>

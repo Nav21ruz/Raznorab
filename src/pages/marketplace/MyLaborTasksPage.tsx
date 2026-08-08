@@ -69,7 +69,7 @@ function TaskRow({ task, onOpen }: { task: LaborTask; onOpen: () => void }) {
         )}
         {task.city && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{task.city}</span>}
         {!!responses?.length && (
-          <span className="flex items-center gap-1 text-orange-400"><Users2 className="w-3.5 h-3.5" />{responses.length} отклик(ов)</span>
+          <span className="flex items-center gap-1 text-copper-400"><Users2 className="w-3.5 h-3.5" />{responses.length} отклик(ов)</span>
         )}
       </div>
     </button>

@@ -70,7 +70,7 @@ export function BuilderFeedPage() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
           >
             <option value="">Любая категория</option>
             {BUILDER_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}

@@ -36,12 +36,12 @@ export function BottomNav({ role, counts }: { role: Role; counts?: Notifications
             <NavLink
               key={to}
               to={to}
-              className={({ isActive }) => `relative flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${isActive ? 'text-orange-400' : 'text-gray-500'}`}
+              className={({ isActive }) => `relative flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${isActive ? 'text-copper-400' : 'text-gray-500'}`}
             >
               <span className="relative">
                 <Icon className="w-5 h-5" />
                 {count > 0 && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-orange-500 text-white text-[10px] font-semibold leading-none flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-copper-500 text-white text-[10px] font-semibold leading-none flex items-center justify-center">
                     {count > 9 ? '9+' : count}
                   </span>
                 )}

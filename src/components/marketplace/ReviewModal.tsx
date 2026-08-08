@@ -55,7 +55,7 @@ export function ReviewModal({ open, onClose, conversationId, peerName }: Props) 
               aria-label={`${n} из 5`}
             >
               <Star
-                className={`w-8 h-8 transition-colors ${n <= (hovered || rating) ? 'text-orange-400 fill-orange-400' : 'text-gray-700'}`}
+                className={`w-8 h-8 transition-colors ${n <= (hovered || rating) ? 'text-copper-400 fill-copper-400' : 'text-gray-700'}`}
               />
             </button>
           ))}
@@ -67,7 +67,7 @@ export function ReviewModal({ open, onClose, conversationId, peerName }: Props) 
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
             placeholder="Как прошла работа?"
           />
         </div>

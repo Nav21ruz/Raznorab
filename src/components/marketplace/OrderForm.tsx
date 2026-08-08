@@ -61,7 +61,7 @@ export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
         <select
           {...register('category')}
           defaultValue=""
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
         >
           <option value="" disabled>Выберите категорию</option>
           {BUILDER_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -76,7 +76,7 @@ export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
         <textarea
           {...register('description')}
           rows={4}
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
           placeholder="Опишите объём работ, сроки, материалы"
         />
         {errors.description && <p className="text-xs text-red-400">{errors.description.message}</p>}

@@ -47,7 +47,7 @@ export function ProfilePage() {
       <h1 className="text-2xl font-bold text-white mb-6">Профиль</h1>
 
       {isMockBackend && (
-        <div className="flex items-start gap-2.5 p-3 mb-6 bg-orange-500/10 border border-orange-500/20 rounded-xl text-xs text-orange-300">
+        <div className="flex items-start gap-2.5 p-3 mb-6 bg-copper-500/10 border border-copper-500/20 rounded-xl text-xs text-copper-300">
           <Info className="w-4 h-4 shrink-0 mt-0.5" />
           <span>Демо-режим: данные хранятся только в этом браузере. Укажите VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY, чтобы подключить реальный Supabase.</span>
         </div>
@@ -69,7 +69,7 @@ export function ProfilePage() {
                     onError: () => toast.error('Не удалось изменить роль'),
                   },
                 )}
-                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700'}`}
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700'}`}
               >
                 <Icon className="w-5 h-5" />
                 {ROLE_LABELS[r]}
@@ -172,7 +172,7 @@ function BuilderProfileForm({ builderProfile }: { builderProfile: BuilderProfile
                 type="button"
                 key={cat}
                 onClick={() => setSpecialties((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat])}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'}`}
               >
                 {cat}
               </button>
@@ -192,7 +192,7 @@ function BuilderProfileForm({ builderProfile }: { builderProfile: BuilderProfile
           <textarea
             {...register('about')}
             rows={3}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
             placeholder="Расскажите о своём опыте и подходе к работе"
           />
         </div>

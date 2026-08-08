@@ -48,7 +48,7 @@ function ObjectStats({ object }: { object: ConstructionObject }) {
   const weeklyData = buildWeeklyData(entries)
 
   const stats = [
-    { label: 'Рабочих дней', value: entries.length, icon: Calendar, color: 'text-orange-400' },
+    { label: 'Рабочих дней', value: entries.length, icon: Calendar, color: 'text-copper-400' },
     { label: 'Недель активности', value: weeklyData.length, icon: BarChart2, color: 'text-blue-400' },
   ]
 

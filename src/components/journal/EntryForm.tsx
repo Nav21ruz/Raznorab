@@ -72,7 +72,7 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
           {Object.entries(WEATHER_LABELS).map(([key, label]) => (
             <label key={key} className="cursor-pointer">
               <input type="radio" value={key} {...register('weather')} className="sr-only peer" />
-              <span className="px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-xl peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 hover:border-gray-600 transition-all block">
+              <span className="px-3 py-1.5 text-sm bg-gray-800 border border-gray-700 rounded-xl peer-checked:border-copper-500 peer-checked:bg-copper-500/10 peer-checked:text-copper-400 hover:border-gray-600 transition-all block">
                 {label}
               </span>
             </label>
@@ -86,7 +86,7 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
         <textarea
           {...register('work_description')}
           className={`px-3 py-2.5 bg-gray-900 border rounded-xl text-sm text-gray-100 outline-none focus:ring-1 resize-none placeholder:text-gray-600 transition-all
-            ${errors.work_description ? 'border-red-500 focus:border-red-400' : 'border-gray-700 focus:border-orange-500 focus:ring-orange-500/30'}`}
+            ${errors.work_description ? 'border-red-500 focus:border-red-400' : 'border-gray-700 focus:border-copper-500 focus:ring-copper-500/30'}`}
           rows={4}
           placeholder="Залита стяжка пола в комнате №1 и №2, площадь 28 м². Установлены маяки в коридоре..."
         />
@@ -122,7 +122,7 @@ export function EntryForm({ defaultValues, onSubmit, submitLabel = 'Сохран
         <label className="text-sm font-medium text-gray-400">Заметки (необязательно)</label>
         <textarea
           {...register('notes')}
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
           rows={2}
           placeholder="Задержка из-за поставки материалов. Завтра — продолжение работ..."
         />

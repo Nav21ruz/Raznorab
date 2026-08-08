@@ -40,7 +40,7 @@ export function LaborTaskDetailPage() {
         <h2 className="text-lg font-bold text-white mb-2">{task.title}</h2>
         <div className="flex flex-wrap gap-3 text-sm text-gray-400 mb-3">
           {task.pay_amount && (
-            <span className="flex items-center gap-1.5 text-orange-400 font-medium">
+            <span className="flex items-center gap-1.5 text-copper-400 font-medium">
               <Wallet className="w-4 h-4" />{task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}
             </span>
           )}
@@ -93,7 +93,7 @@ function LaborerRespond({ taskId, laborerId }: { taskId: string; laborerId: stri
         onChange={(e) => setMessage(e.target.value)}
         rows={3}
         placeholder="Сообщение заказчику (необязательно)"
-        className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600"
+        className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600"
       />
       <Button
         loading={respond.isPending}
@@ -151,7 +151,7 @@ function OwnerResponses({ taskId, taskStatus, customerId }: { taskId: string; ta
               {conv ? (
                 <button
                   onClick={() => navigate(`/chats/${conv.id}`)}
-                  className="w-full py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-white text-xs font-medium transition-colors"
+                  className="w-full py-1.5 rounded-lg bg-copper-500 hover:bg-copper-400 text-white text-xs font-medium transition-colors"
                 >
                   Перейти в чат
                 </button>

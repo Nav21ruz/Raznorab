@@ -11,7 +11,7 @@ import { useLaborTask } from '../../hooks/useLabor'
 import { REPORT_STATUS_LABELS, REPORT_TARGET_LABELS, type Report, type ReportStatus } from '../../types/marketplace'
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
-  pending: 'bg-orange-500/15 text-orange-400',
+  pending: 'bg-copper-500/15 text-copper-400',
   reviewed: 'bg-blue-500/15 text-blue-400',
   dismissed: 'bg-gray-700/50 text-gray-400',
   actioned: 'bg-red-500/15 text-red-400',
@@ -40,7 +40,7 @@ export function AdminReportsPage() {
           <button
             key={value}
             onClick={() => setFilter(value)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filter === value ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-800 text-gray-400 hover:border-gray-700'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filter === value ? 'bg-copper-500 text-white' : 'bg-gray-900 border border-gray-800 text-gray-400 hover:border-gray-700'}`}
           >
             {label}
           </button>
@@ -103,7 +103,7 @@ function ReportRow({ report }: { report: Report }) {
       </div>
 
       <p className="font-semibold text-white mb-1">{targetLabel ?? '…'}</p>
-      <p className="text-sm text-orange-400 mb-1">{report.reason}</p>
+      <p className="text-sm text-copper-400 mb-1">{report.reason}</p>
       {report.comment && <p className="text-sm text-gray-400 mb-2">{report.comment}</p>}
       <p className="text-xs text-gray-600 mb-3">
         От: {reporter ? `${reporter.first_name} ${reporter.last_name ?? ''}`.trim() : '…'}

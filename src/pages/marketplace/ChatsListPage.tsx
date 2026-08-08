@@ -55,7 +55,7 @@ export function ChatsListPage() {
                   {c.lastMessage && <p className={`text-sm truncate mt-0.5 ${c.unreadCount > 0 ? 'text-gray-200' : 'text-gray-400'}`}>{c.lastMessage}</p>}
                 </div>
                 {c.unreadCount > 0 && (
-                  <span className="shrink-0 min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center">
+                  <span className="shrink-0 min-w-[1.25rem] h-5 px-1.5 rounded-full bg-copper-500 text-white text-xs font-semibold flex items-center justify-center">
                     {c.unreadCount > 9 ? '9+' : c.unreadCount}
                   </span>
                 )}

@@ -62,7 +62,7 @@ export function PhotoPicker({ photos, onChange, folder, max = 6, label = 'Фот
             className="w-20 h-20 rounded-xl border border-dashed border-gray-700 flex items-center justify-center text-gray-600 hover:border-gray-600 hover:text-gray-500 transition-colors shrink-0 disabled:opacity-50"
           >
             {upload.isPending ? (
-              <span className="w-4 h-4 border-2 border-gray-600 border-t-orange-500 rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-gray-600 border-t-copper-500 rounded-full animate-spin" />
             ) : (
               <Camera className="w-5 h-5" />
             )}

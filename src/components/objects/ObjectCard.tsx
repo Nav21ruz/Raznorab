@@ -32,13 +32,13 @@ export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
   return (
     <Link
       to={`/journal/objects/${object.id}`}
-      className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-orange-500/50 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
+      className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-copper-500/50 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 bg-orange-500 rounded-full" />
-            <h3 className="font-semibold text-gray-100 truncate group-hover:text-orange-400 transition-colors">
+            <div className="w-2 h-2 bg-copper-500 rounded-full" />
+            <h3 className="font-semibold text-gray-100 truncate group-hover:text-copper-400 transition-colors">
               {object.name}
             </h3>
           </div>
@@ -58,7 +58,7 @@ export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
           >
             <Trash2 className="w-4 h-4" />
           </button>
-          <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-orange-400 transition-colors" />
+          <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-copper-400 transition-colors" />
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export function ObjectCard({ object, entriesCount = 0, lastDate }: Props) {
           </span>
         )}
         {entriesCount === 0 && (
-          <span className="text-xs text-orange-500/70 italic">Нет записей</span>
+          <span className="text-xs text-copper-500/70 italic">Нет записей</span>
         )}
       </div>
     </Link>

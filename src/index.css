@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Фирменная палитра Briggo: медь — акцент/CTA, тёмно-синий — оттенок фона вместо нейтрального серого. */
+@theme {
+  --color-copper-300: #d9a671;
+  --color-copper-400: #cb8a4e;
+  --color-copper-500: #b87333;
+  --color-copper-600: #9c5f28;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,7 +16,7 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
-  background: #0f1117;
+  background: #0d131f;
   color: #e5e7eb;
 }
 

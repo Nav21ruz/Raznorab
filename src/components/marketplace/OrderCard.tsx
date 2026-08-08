@@ -24,7 +24,7 @@ export function OrderCard({ order }: { order: Order }) {
           <ImageOff className="w-10 h-10 text-gray-700" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent" />
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-orange-500 text-white text-xs font-semibold">
+        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-copper-500 text-white text-xs font-semibold">
           {order.category}
         </span>
         <button
@@ -43,12 +43,12 @@ export function OrderCard({ order }: { order: Order }) {
 
         <div className="flex flex-wrap gap-3 text-sm text-gray-400">
           <span className="flex items-center gap-1.5">
-            <Wallet className="w-3.5 h-3.5 text-orange-400" />
+            <Wallet className="w-3.5 h-3.5 text-copper-400" />
             {formatBudget(order)}
           </span>
           {order.city && (
             <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-orange-400" />
+              <MapPin className="w-3.5 h-3.5 text-copper-400" />
               {order.city}{order.address ? `, ${order.address}` : ''}
             </span>
           )}

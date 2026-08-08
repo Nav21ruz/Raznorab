@@ -52,7 +52,7 @@ export function LaborFeedPage() {
           <select
             value={payType}
             onChange={(e) => setPayType(e.target.value as PayType | '')}
-            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30"
+            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
           >
             <option value="">Любой</option>
             {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => <option key={t} value={t}>{PAY_TYPE_LABELS[t]}</option>)}
@@ -86,7 +86,7 @@ export function LaborFeedPage() {
             <p className="text-sm text-gray-400 line-clamp-2 mb-3">{task.description}</p>
             <div className="flex flex-wrap gap-3 text-xs text-gray-500">
               {task.pay_amount && (
-                <span className="flex items-center gap-1 text-orange-400 font-medium">
+                <span className="flex items-center gap-1 text-copper-400 font-medium">
                   <Wallet className="w-3.5 h-3.5" /> {task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}
                 </span>
               )}

@@ -19,7 +19,7 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
   active: 'bg-emerald-500/15 text-emerald-400',
-  in_progress: 'bg-orange-500/15 text-orange-400',
+  in_progress: 'bg-copper-500/15 text-copper-400',
   done: 'bg-gray-700/50 text-gray-400',
   cancelled: 'bg-red-500/15 text-red-400',
 }

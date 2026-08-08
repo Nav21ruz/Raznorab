@@ -55,12 +55,12 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
 
             <div className="flex flex-wrap gap-3 text-sm text-gray-400">
               <span className="flex items-center gap-1.5">
-                <Wallet className="w-3.5 h-3.5 text-orange-400" />
+                <Wallet className="w-3.5 h-3.5 text-copper-400" />
                 {formatPrice(builderProfile)}
               </span>
               {builderProfile.experience_years !== null && (
                 <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-orange-400" />
+                  <Clock className="w-3.5 h-3.5 text-copper-400" />
                   Опыт {builderProfile.experience_years} лет
                 </span>
               )}

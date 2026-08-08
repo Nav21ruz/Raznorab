@@ -29,7 +29,7 @@ export function AdminWordsPage() {
       </p>
 
       <div className="flex items-start gap-2.5 p-3 mb-6 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-400">
-        <Info className="w-4 h-4 shrink-0 mt-0.5 text-orange-400" />
+        <Info className="w-4 h-4 shrink-0 mt-0.5 text-copper-400" />
         <span>
           Паттерн — регулярное выражение Postgres (POSIX). Границы слова: <code className="text-gray-300">\m</code> (начало),{' '}
           <code className="text-gray-300">\M</code> (конец), <code className="text-gray-300">\y</code> (любая сторона). Например{' '}
@@ -43,7 +43,7 @@ export function AdminWordsPage() {
           onChange={(e) => setPattern(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
           placeholder="\mпаттерн\M"
-          className="flex-1 px-3.5 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 placeholder:text-gray-600 font-mono"
+          className="flex-1 px-3.5 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 placeholder:text-gray-600 font-mono"
         />
         <Button onClick={handleAdd} loading={addWord.isPending}>
           <Plus className="w-4 h-4" /> Добавить

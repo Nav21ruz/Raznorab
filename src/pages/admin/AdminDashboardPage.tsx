@@ -24,9 +24,9 @@ export function AdminDashboardPage() {
           <Link
             key={label}
             to={to}
-            className={`p-4 rounded-2xl border flex flex-col gap-2 transition-colors ${highlight ? 'bg-orange-500/10 border-orange-500/30 hover:bg-orange-500/15' : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}
+            className={`p-4 rounded-2xl border flex flex-col gap-2 transition-colors ${highlight ? 'bg-copper-500/10 border-copper-500/30 hover:bg-copper-500/15' : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}
           >
-            <Icon className={`w-5 h-5 ${highlight ? 'text-orange-400' : 'text-gray-500'}`} />
+            <Icon className={`w-5 h-5 ${highlight ? 'text-copper-400' : 'text-gray-500'}`} />
             <span className="text-2xl font-bold text-white">{value}</span>
             <span className="text-xs text-gray-500">{label}</span>
           </Link>

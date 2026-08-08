@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { HardHat } from 'lucide-react'
+import { Handshake } from 'lucide-react'
 import { api } from '../../lib/api'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
@@ -41,8 +41,8 @@ export function ResetPasswordPage() {
     <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-            <HardHat className="w-7 h-7 text-white" />
+          <div className="w-14 h-14 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
+            <Handshake className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Briggo</h1>
         </div>
@@ -51,7 +51,7 @@ export function ResetPasswordPage() {
           {!token ? (
             <div className="text-center py-2">
               <p className="text-sm text-red-400">Некорректная ссылка для сброса пароля.</p>
-              <button onClick={() => navigate('/', { replace: true })} className="text-sm text-orange-400 hover:underline mt-4">
+              <button onClick={() => navigate('/', { replace: true })} className="text-sm text-copper-400 hover:underline mt-4">
                 Вернуться на главную
               </button>
             </div>

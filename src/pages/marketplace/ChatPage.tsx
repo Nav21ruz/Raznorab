@@ -76,7 +76,7 @@ export function ChatPage() {
           {contextTitle && <p className="text-xs text-gray-500 truncate">{contextTitle}</p>}
         </div>
         {peer && !myReviewLoading && !myReview && (
-          <button onClick={() => setShowReview(true)} className="p-2 text-gray-500 hover:text-orange-400 shrink-0" aria-label="Оставить отзыв">
+          <button onClick={() => setShowReview(true)} className="p-2 text-gray-500 hover:text-copper-400 shrink-0" aria-label="Оставить отзыв">
             <Star className="w-4 h-4" />
           </button>
         )}
@@ -94,7 +94,7 @@ export function ChatPage() {
           return (
             <div
               key={m.id}
-              className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm whitespace-pre-wrap break-words ${mine ? 'self-end bg-orange-500 text-white rounded-br-sm' : 'self-start bg-gray-800 text-gray-100 rounded-bl-sm'}`}
+              className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm whitespace-pre-wrap break-words ${mine ? 'self-end bg-copper-500 text-white rounded-br-sm' : 'self-start bg-gray-800 text-gray-100 rounded-bl-sm'}`}
             >
               {m.text}
             </div>
@@ -112,12 +112,12 @@ export function ChatPage() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleSend() }}
           placeholder="Сообщение..."
-          className="flex-1 px-3.5 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 placeholder:text-gray-600"
+          className="flex-1 px-3.5 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 placeholder:text-gray-600"
         />
         <button
           onClick={handleSend}
           disabled={!text.trim() || sendMessage.isPending}
-          className="w-10 h-10 rounded-xl bg-orange-500 hover:bg-orange-400 disabled:opacity-40 flex items-center justify-center text-white transition-colors shrink-0"
+          className="w-10 h-10 rounded-xl bg-copper-500 hover:bg-copper-400 disabled:opacity-40 flex items-center justify-center text-white transition-colors shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>

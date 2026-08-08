@@ -51,7 +51,7 @@ export function ReportModal({ open, onClose, targetType, targetId }: Props) {
                 type="button"
                 key={r}
                 onClick={() => setReason(r)}
-                className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${reason === r ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-600'}`}
+                className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${reason === r ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-600'}`}
               >
                 {r}
               </button>
@@ -65,7 +65,7 @@ export function ReportModal({ open, onClose, targetType, targetId }: Props) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 resize-none placeholder:text-gray-600 transition-all"
+            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
             placeholder="Опишите подробнее, если нужно"
           />
         </div>

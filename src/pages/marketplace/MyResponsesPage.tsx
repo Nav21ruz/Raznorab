@@ -59,7 +59,7 @@ export function MyResponsesPage() {
                 {match ? (
                   <button
                     onClick={() => navigate(`/chats/${match.id}`)}
-                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-white text-sm font-medium transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-copper-500 hover:bg-copper-400 text-white text-sm font-medium transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" /> Мэтч! Перейти в чат
                   </button>

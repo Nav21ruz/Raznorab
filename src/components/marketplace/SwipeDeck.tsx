@@ -70,7 +70,7 @@ export function SwipeDeck<T>({ items, keyExtractor, renderCard, onDecide, emptyS
         <button
           onClick={() => commit(top, 'like')}
           disabled={!!exiting}
-          className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/30 hover:bg-orange-400 active:scale-95 transition-all disabled:opacity-40"
+          className="w-16 h-16 rounded-full bg-copper-500 flex items-center justify-center text-white shadow-lg shadow-copper-500/30 hover:bg-copper-400 active:scale-95 transition-all disabled:opacity-40"
           aria-label="Откликнуться"
         >
           <Heart className="w-7 h-7" fill="currentColor" />
