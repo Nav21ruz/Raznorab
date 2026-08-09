@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, Share2, FileDown, Copy, Check, MapPin, Calendar } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '../lib/supabase'
+import { randomId } from '../lib/uuid'
 import { useObject } from '../hooks/useObjects'
 import { useEntries } from '../hooks/useEntries'
 import { usePhotos } from '../hooks/usePhotos'
@@ -22,9 +23,12 @@ export function ObjectDetailPage() {
   const [showShare, setShowShare] = useState(false)
   const [showPDF, setShowPDF] = useState(false)
   const [copied, setCopied] = useState(false)
+  // лениво захватываем "сейчас" один раз при монтировании — Date.now() нельзя
+  // вызывать прямо в теле рендера (правило react-hooks/purity)
+  const [now] = useState(() => Date.now())
 
   const generateShareLink = async () => {
-    const token = crypto.randomUUID()
+    const token = randomId()
     const { error } = await supabase.from('share_tokens').insert({ object_id: id, token })
     if (!error) {
       const url = `${window.location.origin}/share/${token}`
@@ -45,7 +49,7 @@ export function ObjectDetailPage() {
   if (objLoading) return <><Navbar /><Spinner className="mt-24" /></>
 
   const totalDays = entries?.length ?? 0
-  const daysSinceStart = object ? Math.floor((Date.now() - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)) : 0
+  const daysSinceStart = object ? Math.floor((now - new Date(object.start_date).getTime()) / (1000 * 60 * 60 * 24)) : 0
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -53,7 +57,7 @@ export function ObjectDetailPage() {
 
       <div className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-3xl mx-auto px-4 py-5">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-4">
+          <Link to="/journal" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" /> Все объекты
           </Link>
           <div className="flex items-start justify-between gap-4">
@@ -96,7 +100,7 @@ export function ObjectDetailPage() {
       <main className="max-w-3xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-gray-200">Записи журнала</h2>
-          <Link to={`/objects/${id}/new-entry`}>
+          <Link to={`/journal/objects/${id}/new-entry`}>
             <Button size="sm"><Plus className="w-4 h-4" /> Запись за день</Button>
           </Link>
         </div>

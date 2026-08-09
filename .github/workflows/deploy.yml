@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [claude/construction-repair-app-ideas-h8zojn]
+    branches: [claude/telegram-construction-app-kujrc1]
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # GitHub Pages раздаёт сайт из подпапки /<repo>/.
+          # При переезде на свой домен — уберите эту переменную (тогда база станет '/').
+          VITE_BASE_PATH: /raznorab/
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3

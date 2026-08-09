@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { randomId } from '../lib/uuid'
 import type { EntryPhoto } from '../types'
 
 export function usePhotos(entryId: string) {
@@ -36,7 +37,7 @@ export function useUploadPhotos(entryId: string) {
       const results: EntryPhoto[] = []
       for (const file of files) {
         const ext = file.name.split('.').pop()
-        const path = `${entryId}/${crypto.randomUUID()}.${ext}`
+        const path = `${entryId}/${randomId()}.${ext}`
 
         const { error: uploadErr } = await supabase.storage
           .from('entry-photos')

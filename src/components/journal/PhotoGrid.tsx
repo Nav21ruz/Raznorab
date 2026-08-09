@@ -62,10 +62,10 @@ export function PhotoGrid({ entryId, photos, readonly = false }: Props) {
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square rounded-xl border-2 border-dashed border-gray-700 hover:border-orange-500/50 hover:bg-orange-500/5 flex flex-col items-center justify-center gap-1.5 transition-all disabled:opacity-40"
+            className="aspect-square rounded-xl border-2 border-dashed border-gray-700 hover:border-copper-500/50 hover:bg-copper-500/5 flex flex-col items-center justify-center gap-1.5 transition-all disabled:opacity-40"
           >
             {uploading ? (
-              <span className="w-5 h-5 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
+              <span className="w-5 h-5 border-2 border-copper-400 border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <Plus className="w-5 h-5 text-gray-600" />

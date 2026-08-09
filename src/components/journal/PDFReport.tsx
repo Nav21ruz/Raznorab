@@ -54,11 +54,11 @@ export function PDFReport({ object, entries, onClose }: Props) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600 block mb-1">Период с</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-orange-400" />
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-copper-400" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 block mb-1">по</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-orange-400" />
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-copper-400" />
         </div>
       </div>
       <p className="text-sm text-gray-500">Записей в отчёте: {filtered.length}</p>
@@ -99,8 +99,8 @@ export function PDFReport({ object, entries, onClose }: Props) {
 
 function EntryPrintBlock({ entry, index }: { entry: Entry; index: number }) {
   const { data } = useEntry(entry.id)
-  const workers: import('../../types').EntryWorker[] = (data as any)?.entry_workers ?? []
-  const photos: import('../../types').EntryPhoto[] = (data as any)?.entry_photos ?? []
+  const workers = data?.entry_workers ?? []
+  const photos = data?.entry_photos ?? []
   const weather = WEATHER_LABELS[entry.weather as keyof typeof WEATHER_LABELS] ?? entry.weather
 
   return (

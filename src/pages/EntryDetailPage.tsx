@@ -25,7 +25,7 @@ export function EntryDetailPage() {
   if (!data) return null
 
   const entry = data
-  const workers: EntryWorker[] = (data as any).entry_workers ?? []
+  const workers: EntryWorker[] = data.entry_workers ?? []
   const weather = WEATHER_LABELS[entry.weather as keyof typeof WEATHER_LABELS] ?? entry.weather
   const totalHours = workers.reduce((s, w) => s + w.hours, 0)
 
@@ -49,7 +49,7 @@ export function EntryDetailPage() {
     if (confirm('Удалить эту запись?')) {
       deleteEntry({ id: id!, objectId: entry.object_id })
       toast.success('Запись удалена')
-      navigate(`/objects/${entry.object_id}`)
+      navigate(`/journal/objects/${entry.object_id}`)
     }
   }
 
@@ -59,7 +59,7 @@ export function EntryDetailPage() {
 
       <div className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-2xl mx-auto px-4 py-5">
-          <Link to={`/objects/${entry.object_id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-4">
+          <Link to={`/journal/objects/${entry.object_id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" /> К объекту
           </Link>
           <div className="flex items-center justify-between">

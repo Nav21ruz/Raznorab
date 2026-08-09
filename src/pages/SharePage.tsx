@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { HardHat, MapPin, Calendar, Users, Camera, Lock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { getPhotoUrl } from '../hooks/usePhotos'
+import type { EntryWithDetails as RawEntryWithDetails } from '../hooks/useEntries'
 import { WEATHER_LABELS } from '../types'
 import type { ConstructionObject, Entry, EntryWorker, EntryPhoto } from '../types'
 import { Spinner } from '../components/shared/Spinner'
@@ -39,7 +40,7 @@ export function SharePage() {
         .eq('object_id', obj.id)
         .order('date', { ascending: false })
 
-      setEntries((entriesData ?? []).map((e: any) => ({
+      setEntries(((entriesData ?? []) as RawEntryWithDetails[]).map((e) => ({
         entry: e,
         workers: e.entry_workers ?? [],
         photos: e.entry_photos ?? [],
@@ -71,7 +72,7 @@ export function SharePage() {
       <header className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-2xl mx-auto px-4 py-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 bg-orange-500 rounded-xl flex items-center justify-center">
+            <div className="w-7 h-7 bg-copper-500 rounded-xl flex items-center justify-center">
               <HardHat className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="text-sm text-gray-500">Журнал объекта · только просмотр</span>

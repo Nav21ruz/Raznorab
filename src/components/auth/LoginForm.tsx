@@ -36,7 +36,7 @@ export function LoginForm() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+          <div className="w-14 h-14 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
             <HardHat className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Журнал объекта</h1>

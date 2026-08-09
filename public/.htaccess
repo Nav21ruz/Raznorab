@@ -1,0 +1,58 @@
+# ============================================================
+# Настройки для Apache-хостинга (reg.ru и подобные)
+# ============================================================
+
+# --- Типы файлов ---
+# ВАЖНО: браузер выполняет модули JavaScript только если сервер отдаёт их
+# с типом application/javascript. Если хостинг отдаёт .js как text/plain,
+# страница остаётся пустой без каких-либо видимых ошибок.
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType application/javascript .mjs
+  AddType text/css .css
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml .svg
+  AddType application/json .json
+</IfModule>
+
+# --- Одностраничное приложение: любой неизвестный путь отдаём index.html ---
+# Без этого прямые ссылки (/orders, /chats/…) и обновление страницы дают 404.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Существующие файлы и папки отдаём как есть — сюда попадают все
+  # css/js/картинки, их переписывать на index.html ни в коем случае нельзя.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Подстраховка на случай, если проверка существования файла на хостинге
+  # не срабатывает: файлы с расширениями всё равно не подменяем.
+  RewriteRule \.(js|mjs|css|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|map|json|webmanifest|txt|xml)$ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# --- Кэширование ---
+<IfModule mod_headers.c>
+  # файлы сборки содержат хэш в имени — можно кэшировать надолго
+  <FilesMatch "\.(js|mjs|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # а это должно перечитываться, иначе правки настроек и обновления не доедут
+  <FilesMatch "^(index\.html|config\.js|sw\.js|registerSW\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --- Сжатие ---
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Кодировка по умолчанию ---
+AddDefaultCharset UTF-8

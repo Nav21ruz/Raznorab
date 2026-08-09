@@ -14,8 +14,8 @@ export function EntryCard({ entry, workersCount = 0, photosCount = 0 }: Props) {
 
   return (
     <Link
-      to={`/entries/${entry.id}`}
-      className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-orange-500/40 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
+      to={`/journal/entries/${entry.id}`}
+      className="block bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-copper-500/40 hover:bg-gray-800/50 transition-all duration-200 group animate-fade-in"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
@@ -30,7 +30,7 @@ export function EntryCard({ entry, workersCount = 0, photosCount = 0 }: Props) {
           </div>
           <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed">{entry.work_description}</p>
         </div>
-        <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-orange-400 transition-colors shrink-0 mt-0.5" />
+        <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-copper-400 transition-colors shrink-0 mt-0.5" />
       </div>
 
       {(workersCount > 0 || photosCount > 0) && (

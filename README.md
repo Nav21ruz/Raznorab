@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Briggo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Биржа для стройки и разовых подработок — обычный сайт на своём домене, вход по
+email и паролю (или через Яндекс), ставится на телефон как приложение (PWA).
 
-Currently, two official plugins are available:
+- **Заказчик ↔ Строитель** — как Тиндер: заказчик публикует заказ, строители свайпают ленту заказов (вправо — отклик, влево — пропуск). Заказчик просматривает отклики и подтверждает мэтч — открывается чат.
+- **Разнорабочие** — отдельный, более простой раздел: заказчик публикует разовую задачу, разнорабочие просто откликаются в ленте без свайпов, заказчик выбирает исполнителя.
+- Чат между мэтчами — обновляется периодическим опросом (несколько секунд), без постоянно работающего сервера.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Плюс отдельный, не связанный с биржей инструмент — **Журнал объекта** (`/journal`) для прораба: дневник строительного объекта с фото, статистикой и PDF-отчётами. Он использует свой собственный бэкенд (Supabase) и никак не пересекается с остальным сайтом.
 
-## React Compiler
+### Модерация
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Фильтр цензуры** — список стоп-слов (`banned_words`) хранится в БД и маскируется прямо в Postgres-триггерах при вставке/обновлении заказов, задач, сообщений чата и профиля строителя. Это нельзя обойти в обход интерфейса. На клиенте та же проверка даёт мгновенную подсказку до отправки. Список изначально пуст — админ наполняет его сам через панель под свою политику модерации.
+- **Жалобы** — на заказ, задачу разнорабочих или пользователя (кнопка с флажком на карточках в ленте/у отклика, в чате, на странице задачи).
+- **Админ-панель** (`/admin`, не в общем доступе) — дашборд со сводкой, очередь жалоб с действиями (рассмотрено/отклонено/бан автора), поиск и бан/разбан пользователей, управление стоп-словами.
 
-## Expanding the ESLint configuration
+### Юридические страницы
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+`/privacy` (политика конфиденциальности) и `/terms` (пользовательское соглашение) — с реальными реквизитами оператора. Регистрация требует согласия с обоими документами.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Стек
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**Фронтенд**: React 19 + TypeScript + Vite + Tailwind CSS 4, React Router, TanStack Query, framer-motion (свайп-механика).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Бэкенд** (`server/`): свой Node.js/Express-сервер поверх обычного PostgreSQL — не Supabase, что позволяет разместить всё на серверах в России (важно по 152-ФЗ, если работаете с персональными данными российских пользователей). Подробности архитектуры — `server/README.md`, пошаговая инструкция по разворачиванию в Яндекс.Облаке для нетехнического пользователя — `ИНСТРУКЦИЯ-ЯНДЕКС-ОБЛАКО.txt` в корне репозитория.
+
+Отдельный инструмент «Журнал объекта» продолжает использовать Supabase — он не связан с основным бэкендом.
+
+## Запуск
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Без настроенного бэкенда (см. ниже) приложение автоматически работает в демо-режиме: данные хранятся только в localStorage браузера — этого достаточно, чтобы открыть и попробовать все сценарии локально, без какой-либо настройки.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Подключение реального бэкенда
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Два шага:
+
+1. **Основной сайт** (заказы, чат, админка) — свой сервер, см. `server/README.md` для локального запуска и `ИНСТРУКЦИЯ-ЯНДЕКС-ОБЛАКО.txt` для разворачивания в облаке. После настройки впишите адрес сервера в `public/config.js` → `API_URL`.
+
+2. **Журнал объекта** (`/journal`, опционально, отдельный инструмент) — обычный Supabase-проект:
+   - создайте проект на [supabase.com](https://supabase.com);
+   - выполните `supabase/schema.sql` в SQL Editor;
+   - создайте публичный Storage-бакет `entry-photos`;
+   - впишите `SUPABASE_URL` / `SUPABASE_ANON_KEY` в `public/config.js`.
+
+**Назначение первого админа** (для основного сайта) — самостоятельной регистрации админов в приложении нет (это осознанно, чтобы никто не мог сам себе выдать права). Зарегистрируйтесь один раз как обычный пользователь, найдите свою запись в таблице `profiles` и выполните в SQL-редакторе вашей базы:
+```sql
+insert into admins (profile_id) values ('<ваш profiles.id>');
 ```
+После этого `/admin` станет доступен именно вам.
+
+## Публикация на своём домене
+
+```bash
+npm run build      # результат в dist/, залить на любой статический хостинг
+```
+
+Одно обязательное условие: это SPA, поэтому сервер должен отдавать `index.html` на любой неизвестный путь, иначе прямые ссылки (`/orders`, `/chats/...`) будут давать 404. Для Apache уже настроено в `public/.htaccess`; для nginx:
+
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+### Установка как приложение (PWA)
+
+Собранный сайт — полноценное PWA: манифест, иконки и service worker уже настроены.
+На телефоне в меню браузера появится «Установить приложение» / «На экран «Домой»» — оно
+запускается в отдельном окне без адресной строки и с обычной иконкой.
+
+### GitHub Pages
+
+Сайт раздаётся из подпапки, поэтому нужен базовый путь — он уже прописан в
+`.github/workflows/deploy.yml` (`VITE_BASE_PATH=/raznorab/`). При переезде на свой домен
+просто уберите эту переменную.
+
+## Вход
+
+Email + пароль, либо через Яндекс (кнопка появляется автоматически, когда на сервере
+настроен `YANDEX_CLIENT_ID`/`YANDEX_CLIENT_SECRET` — см. `server/.env.example`).
