@@ -62,7 +62,7 @@ export function SwipeDeck<T>({ items, keyExtractor, renderCard, onDecide, emptyS
         <button
           onClick={() => commit(top, 'pass')}
           disabled={!!exiting}
-          className="w-14 h-14 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-red-400 shadow-lg hover:bg-gray-800 active:scale-95 transition-all disabled:opacity-40"
+          className="w-14 h-14 rounded-full bg-bg-card border border-border-1 flex items-center justify-center text-error-text shadow-lg hover:bg-border-1 active:scale-95 transition-all disabled:opacity-40"
           aria-label="Пропустить"
         >
           <X className="w-6 h-6" />
@@ -70,7 +70,7 @@ export function SwipeDeck<T>({ items, keyExtractor, renderCard, onDecide, emptyS
         <button
           onClick={() => commit(top, 'like')}
           disabled={!!exiting}
-          className="w-16 h-16 rounded-full bg-copper-500 flex items-center justify-center text-white shadow-lg shadow-copper-500/30 hover:bg-copper-400 active:scale-95 transition-all disabled:opacity-40"
+          className="w-16 h-16 rounded-full bg-copper-500 flex items-center justify-center text-white shadow-lg shadow-copper-500/30 hover:bg-copper-hover active:scale-95 transition-all disabled:opacity-40"
           aria-label="Откликнуться"
         >
           <Heart className="w-7 h-7" fill="currentColor" />

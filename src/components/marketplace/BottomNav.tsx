@@ -28,7 +28,7 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
 export function BottomNav({ role, counts }: { role: Role; counts?: NotificationsSummary }) {
   const items = NAV_BY_ROLE[role]
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-30 bg-gray-950/95 backdrop-blur-md border-t border-gray-800/60" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <nav className="fixed bottom-0 inset-x-0 z-30 bg-bg-page/95 backdrop-blur-md border-t border-border-1/60" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="max-w-lg mx-auto grid grid-cols-4">
         {items.map(({ to, icon: Icon, label, countKey }) => {
           const count = countKey && counts ? counts[countKey] : 0
@@ -36,7 +36,7 @@ export function BottomNav({ role, counts }: { role: Role; counts?: Notifications
             <NavLink
               key={to}
               to={to}
-              className={({ isActive }) => `relative flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${isActive ? 'text-copper-400' : 'text-gray-500'}`}
+              className={({ isActive }) => `relative flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${isActive ? 'text-copper-hover' : 'text-text-muted'}`}
             >
               <span className="relative">
                 <Icon className="w-5 h-5" />

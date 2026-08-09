@@ -51,28 +51,28 @@ export function OnboardingPage() {
 
   if (!role) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col justify-center px-6 py-12">
+      <div className="min-h-screen bg-bg-page flex flex-col justify-center px-6 py-12">
         <div className="max-w-sm mx-auto w-full flex flex-col gap-4">
           <div className="text-center mb-3">
             <div className="w-16 h-16 bg-copper-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-copper-500/30">
               <Handshake className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white">Briggo</h1>
-            <p className="text-sm text-gray-500 mt-1">Кто вы?</p>
+            <h1 className="text-2xl font-bold text-text-primary">Briggo</h1>
+            <p className="text-sm text-text-muted mt-1">Кто вы?</p>
           </div>
 
           {ROLE_OPTIONS.map(({ role: r, title, description, icon: Icon }) => (
             <button
               key={r}
               onClick={() => setRole(r)}
-              className="flex items-center gap-4 p-4 bg-gray-900 border border-gray-800 rounded-2xl hover:border-copper-500/50 active:scale-[0.98] transition-all text-left"
+              className="flex items-center gap-4 p-4 bg-bg-card border border-border-1 rounded-2xl hover:border-copper-500/50 active:scale-[0.98] transition-all text-left"
             >
-              <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
-                <Icon className="w-6 h-6 text-copper-400" />
+              <div className="w-12 h-12 bg-border-1 rounded-xl flex items-center justify-center shrink-0">
+                <Icon className="w-6 h-6 text-copper-hover" />
               </div>
               <div>
-                <p className="font-semibold text-white">{title}</p>
-                <p className="text-sm text-gray-500">{description}</p>
+                <p className="font-semibold text-text-primary">{title}</p>
+                <p className="text-sm text-text-muted">{description}</p>
               </div>
             </button>
           ))}
@@ -111,10 +111,10 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 px-6 py-10">
+    <div className="min-h-screen bg-bg-page px-6 py-10">
       <div className="max-w-sm mx-auto flex flex-col gap-5">
-        <button onClick={() => setRole(null)} className="text-sm text-gray-500 hover:text-gray-300 self-start">← Назад</button>
-        <h1 className="text-xl font-bold text-white">Расскажите о себе</h1>
+        <button onClick={() => setRole(null)} className="text-sm text-text-muted hover:text-text-secondary self-start">← Назад</button>
+        <h1 className="text-xl font-bold text-text-primary">Расскажите о себе</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input label="Имя" placeholder="Как к вам обращаться" error={errors.first_name?.message} {...register('first_name')} />
@@ -124,14 +124,14 @@ export function OnboardingPage() {
           {role === 'builder' && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-gray-400">Специализация</label>
+                <label className="text-sm font-medium text-text-secondary">Специализация</label>
                 <div className="flex flex-wrap gap-2">
                   {BUILDER_CATEGORIES.map((cat) => (
                     <button
                       type="button"
                       key={cat}
                       onClick={() => setSpecialties((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat])}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'}`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-copper-500 border-copper-500 text-white' : 'bg-bg-card border-border-2 text-text-secondary hover:border-copper-500/40'}`}
                     >
                       {cat}
                     </button>
@@ -147,11 +147,11 @@ export function OnboardingPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-gray-400">О себе (необязательно)</label>
+                <label className="text-sm font-medium text-text-secondary">О себе (необязательно)</label>
                 <textarea
                   {...register('about')}
                   rows={3}
-                  className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
+                  className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-text-muted transition-all"
                   placeholder="Расскажите о своём опыте и подходе к работе"
                 />
               </div>

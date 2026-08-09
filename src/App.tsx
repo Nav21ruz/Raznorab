@@ -19,6 +19,7 @@ const StatsPage = lazy(() => import('./pages/StatsPage').then((m) => ({ default:
 // Briggo: заказчики, строители, разнорабочие
 import { AuthGate } from './components/marketplace/AuthGate'
 import { MarketplaceShell } from './components/marketplace/MarketplaceShell'
+import { BriggoThemeProvider } from './components/marketplace/BriggoThemeProvider'
 import { OnboardingPage } from './pages/marketplace/OnboardingPage'
 import { BuilderFeedPage } from './pages/marketplace/BuilderFeedPage'
 import { MyResponsesPage } from './pages/marketplace/MyResponsesPage'
@@ -92,10 +93,6 @@ export default function App() {
             <Route path="/share/:token" element={<SharePage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
-            <Route path="/auth" element={<WebAuthPage />} />
-            <Route path="/auth/yandex/callback" element={<YandexCallbackPage />} />
-            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-
             <Route path="/journal" element={<JournalGate />}>
               <Route index element={<ObjectsPage />} />
               <Route path="objects/:id" element={<ObjectDetailPage />} />
@@ -105,32 +102,38 @@ export default function App() {
               <Route path="*" element={<Navigate to="/journal" replace />} />
             </Route>
 
-            <Route element={<AuthGate />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route element={<BriggoThemeProvider><Outlet /></BriggoThemeProvider>}>
+              <Route path="/auth" element={<WebAuthPage />} />
+              <Route path="/auth/yandex/callback" element={<YandexCallbackPage />} />
+              <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-              <Route element={<MarketplaceShell />}>
-                <Route path="/" element={<RoleHome />} />
-                <Route path="/feed" element={<BuilderFeedPage />} />
-                <Route path="/responses" element={<MyResponsesPage />} />
-                <Route path="/orders" element={<CustomerOrdersPage />} />
-                <Route path="/orders/:id/candidates" element={<OrderCandidatesPage />} />
-                <Route path="/labor" element={<LaborFeedPage />} />
-                <Route path="/labor/mine" element={<MyLaborTasksPage />} />
-                <Route path="/labor/my-responses" element={<MyLaborResponsesPage />} />
-                <Route path="/labor/:id" element={<LaborTaskDetailPage />} />
-                <Route path="/chats" element={<ChatsListPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-              </Route>
+              <Route element={<AuthGate />}>
+                <Route path="/onboarding" element={<OnboardingPage />} />
 
-              <Route element={<MarketplaceShell nav={false} />}>
-                <Route path="/chats/:id" element={<ChatPage />} />
-              </Route>
+                <Route element={<MarketplaceShell />}>
+                  <Route path="/" element={<RoleHome />} />
+                  <Route path="/feed" element={<BuilderFeedPage />} />
+                  <Route path="/responses" element={<MyResponsesPage />} />
+                  <Route path="/orders" element={<CustomerOrdersPage />} />
+                  <Route path="/orders/:id/candidates" element={<OrderCandidatesPage />} />
+                  <Route path="/labor" element={<LaborFeedPage />} />
+                  <Route path="/labor/mine" element={<MyLaborTasksPage />} />
+                  <Route path="/labor/my-responses" element={<MyLaborResponsesPage />} />
+                  <Route path="/labor/:id" element={<LaborTaskDetailPage />} />
+                  <Route path="/chats" element={<ChatsListPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                </Route>
 
-              <Route path="/admin" element={<AdminGate />}>
-                <Route index element={<AdminDashboardPage />} />
-                <Route path="reports" element={<AdminReportsPage />} />
-                <Route path="users" element={<AdminUsersPage />} />
-                <Route path="words" element={<AdminWordsPage />} />
+                <Route element={<MarketplaceShell nav={false} />}>
+                  <Route path="/chats/:id" element={<ChatPage />} />
+                </Route>
+
+                <Route path="/admin" element={<AdminGate />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="reports" element={<AdminReportsPage />} />
+                  <Route path="users" element={<AdminUsersPage />} />
+                  <Route path="words" element={<AdminWordsPage />} />
+                </Route>
               </Route>
             </Route>
 

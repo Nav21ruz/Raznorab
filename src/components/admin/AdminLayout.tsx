@@ -11,24 +11,28 @@ const NAV = [
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-950">
-      <header className="sticky top-0 z-20 bg-gray-950/95 backdrop-blur-md border-b border-gray-800/60">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-copper-400" />
-            <span className="font-bold text-white text-sm">Админ-панель</span>
+    <div className="min-h-screen bg-bg-page">
+      <header className="sticky top-0 z-20">
+        {/* Бренд-полоса всегда тёмно-синяя, независимо от темы Briggo — так решено в
+            дизайн-хендоффе: админка держит акцент бренда, а не следует светлой/тёмной теме. */}
+        <div className="bg-[#102a43]">
+          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-copper-400" />
+              <span className="font-bold text-white text-sm">Briggo Admin</span>
+            </div>
+            <NavLink to="/" className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white">
+              <ArrowLeft className="w-3.5 h-3.5" /> В приложение
+            </NavLink>
           </div>
-          <NavLink to="/" className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300">
-            <ArrowLeft className="w-3.5 h-3.5" /> В приложение
-          </NavLink>
         </div>
-        <nav className="max-w-3xl mx-auto px-4 flex gap-1 overflow-x-auto pb-2">
+        <nav className="bg-bg-card/95 backdrop-blur-md border-b border-border-1 max-w-3xl mx-auto px-4 flex gap-1 overflow-x-auto py-2">
           {NAV.map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
-              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${isActive ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+              className={({ isActive }) => `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${isActive ? 'bg-copper-500 text-white' : 'text-text-muted hover:text-text-secondary'}`}
             >
               <Icon className="w-3.5 h-3.5" />
               {label}

@@ -59,13 +59,13 @@ export function SwipeCard({ children, depth, isTop, exitDirection, onDecide }: P
           <>
             <motion.div
               style={{ opacity: likeOpacity }}
-              className="absolute top-6 left-6 px-3 py-1.5 rounded-xl border-2 border-emerald-400 text-emerald-400 font-bold text-lg -rotate-12 pointer-events-none bg-gray-950/60"
+              className="absolute top-6 left-6 px-3 py-1.5 rounded-xl border-2 border-success-text text-success-text font-bold text-lg -rotate-12 pointer-events-none bg-bg-page/60"
             >
               ОТКЛИК
             </motion.div>
             <motion.div
               style={{ opacity: passOpacity }}
-              className="absolute top-6 right-6 px-3 py-1.5 rounded-xl border-2 border-red-400 text-red-400 font-bold text-lg rotate-12 pointer-events-none bg-gray-950/60"
+              className="absolute top-6 right-6 px-3 py-1.5 rounded-xl border-2 border-error-text text-error-text font-bold text-lg rotate-12 pointer-events-none bg-bg-page/60"
             >
               ПРОПУСК
             </motion.div>

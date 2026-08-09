@@ -18,7 +18,7 @@ export function FilterPanel({ activeCount, onReset, children }: Props) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border transition-colors
-            ${activeCount > 0 ? 'bg-copper-500/10 border-copper-500/30 text-copper-400' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-gray-200'}`}
+            ${activeCount > 0 ? 'bg-copper-500/10 border-copper-500/30 text-copper-hover' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-gray-200'}`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           Фильтры

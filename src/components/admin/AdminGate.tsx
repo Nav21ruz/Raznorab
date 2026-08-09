@@ -11,7 +11,7 @@ export function AdminGate() {
 
   if (profileLoading || adminLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-page flex items-center justify-center">
         <Spinner />
       </div>
     )

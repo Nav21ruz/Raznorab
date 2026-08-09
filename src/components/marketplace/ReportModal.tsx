@@ -44,14 +44,14 @@ export function ReportModal({ open, onClose, targetType, targetId }: Props) {
     <Modal open={open} onClose={handleClose} title="Пожаловаться">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">Причина</label>
+          <label className="text-sm font-medium text-text-secondary">Причина</label>
           <div className="flex flex-col gap-2">
             {REPORT_REASONS.map((r) => (
               <button
                 type="button"
                 key={r}
                 onClick={() => setReason(r)}
-                className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${reason === r ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-600'}`}
+                className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${reason === r ? 'bg-copper-500 border-copper-500 text-white' : 'bg-bg-card border-border-2 text-text-secondary hover:border-copper-500/40'}`}
               >
                 {r}
               </button>
@@ -60,12 +60,12 @@ export function ReportModal({ open, onClose, targetType, targetId }: Props) {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">Комментарий (необязательно)</label>
+          <label className="text-sm font-medium text-text-secondary">Комментарий (необязательно)</label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
+            className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-text-muted transition-all"
             placeholder="Опишите подробнее, если нужно"
           />
         </div>

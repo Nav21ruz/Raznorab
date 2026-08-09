@@ -18,18 +18,18 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
 
   return (
     <CardShell>
-      <div className="relative h-56 bg-gray-800 flex items-center justify-center shrink-0">
+      <div className="relative h-56 bg-border-1 flex items-center justify-center shrink-0">
         {photo ? (
           <img src={photo} alt="" className="w-full h-full object-cover" />
         ) : (
-          <User className="w-14 h-14 text-gray-700" />
+          <User className="w-14 h-14 text-text-muted" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent" />
         <button
           type="button"
           onPointerDownCapture={(e) => e.stopPropagation()}
           onClick={(e) => { e.stopPropagation(); setShowReport(true) }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-gray-950/60 backdrop-blur-sm flex items-center justify-center text-gray-300 hover:text-red-400 transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-bg-page/60 backdrop-blur-sm flex items-center justify-center text-text-secondary hover:text-error-text transition-colors"
           aria-label="Пожаловаться на пользователя"
         >
           <Flag className="w-4 h-4" />
@@ -38,9 +38,9 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
 
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
         <div>
-          <h3 className="text-lg font-bold text-white leading-snug">{profile.first_name} {profile.last_name}</h3>
+          <h3 className="text-lg font-bold text-text-primary leading-snug">{profile.first_name} {profile.last_name}</h3>
           <div className="flex items-center gap-2 mt-0.5">
-            {profile.city && <p className="text-sm text-gray-500">{profile.city}</p>}
+            {profile.city && <p className="text-sm text-text-muted">{profile.city}</p>}
             <RatingBadge profileId={profile.id} />
           </div>
         </div>
@@ -49,25 +49,25 @@ export function BuilderCandidateCard({ profile, builderProfile }: { profile: Pro
           <>
             <div className="flex flex-wrap gap-2">
               {builderProfile.specialties.map((s) => (
-                <span key={s} className="px-2.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-xs text-gray-300">{s}</span>
+                <span key={s} className="px-2.5 py-1 rounded-lg bg-border-1 border border-border-2 text-xs text-text-secondary">{s}</span>
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+            <div className="flex flex-wrap gap-3 text-sm text-text-secondary">
               <span className="flex items-center gap-1.5">
-                <Wallet className="w-3.5 h-3.5 text-copper-400" />
+                <Wallet className="w-3.5 h-3.5 text-copper-hover" />
                 {formatPrice(builderProfile)}
               </span>
               {builderProfile.experience_years !== null && (
                 <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-copper-400" />
+                  <Clock className="w-3.5 h-3.5 text-copper-hover" />
                   Опыт {builderProfile.experience_years} лет
                 </span>
               )}
             </div>
 
             {builderProfile.about && (
-              <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{builderProfile.about}</p>
+              <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">{builderProfile.about}</p>
             )}
           </>
         )}

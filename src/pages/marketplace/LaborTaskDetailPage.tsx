@@ -25,22 +25,22 @@ export function LaborTaskDetailPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-500 hover:text-gray-300">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-muted hover:text-text-secondary">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-bold text-white flex-1">Задача</h1>
+        <h1 className="text-xl font-bold text-text-primary flex-1">Задача</h1>
         {!isOwner && (
-          <button onClick={() => setShowReport(true)} className="p-2 -mr-2 text-gray-500 hover:text-red-400" aria-label="Пожаловаться на задачу">
+          <button onClick={() => setShowReport(true)} className="p-2 -mr-2 text-text-muted hover:text-error-text" aria-label="Пожаловаться на задачу">
             <Flag className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      <div className="p-4 bg-gray-900 border border-gray-800 rounded-2xl mb-4">
-        <h2 className="text-lg font-bold text-white mb-2">{task.title}</h2>
-        <div className="flex flex-wrap gap-3 text-sm text-gray-400 mb-3">
+      <div className="p-4 bg-bg-card border border-border-1 rounded-2xl mb-4">
+        <h2 className="text-lg font-bold text-text-primary mb-2">{task.title}</h2>
+        <div className="flex flex-wrap gap-3 text-sm text-text-secondary mb-3">
           {task.pay_amount && (
-            <span className="flex items-center gap-1.5 text-copper-400 font-medium">
+            <span className="flex items-center gap-1.5 text-copper-hover font-medium">
               <Wallet className="w-4 h-4" />{task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}
             </span>
           )}
@@ -49,7 +49,7 @@ export function LaborTaskDetailPage() {
             <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" />{new Date(task.date_needed).toLocaleDateString('ru-RU')}</span>
           )}
         </div>
-        <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{task.description}</p>
+        <p className="text-sm text-text-secondary whitespace-pre-wrap leading-relaxed">{task.description}</p>
       </div>
 
       {isOwner ? (
@@ -83,7 +83,7 @@ function LaborerRespond({ taskId, laborerId }: { taskId: string; laborerId: stri
   }
 
   if (myResponse) {
-    return <p className="text-center text-sm text-gray-500 py-4">Вы откликнулись на эту задачу. Ждите решения заказчика.</p>
+    return <p className="text-center text-sm text-text-muted py-4">Вы откликнулись на эту задачу. Ждите решения заказчика.</p>
   }
 
   return (
@@ -93,7 +93,7 @@ function LaborerRespond({ taskId, laborerId }: { taskId: string; laborerId: stri
         onChange={(e) => setMessage(e.target.value)}
         rows={3}
         placeholder="Сообщение заказчику (необязательно)"
-        className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600"
+        className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-text-muted"
       />
       <Button
         loading={respond.isPending}
@@ -133,25 +133,25 @@ function OwnerResponses({ taskId, taskStatus, customerId }: { taskId: string; ta
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-400 mb-3">Отклики{responses?.length ? ` (${responses.length})` : ''}</h3>
-      {responses?.length === 0 && <p className="text-sm text-gray-600">Пока никто не откликнулся</p>}
+      <h3 className="text-sm font-semibold text-text-secondary mb-3">Отклики{responses?.length ? ` (${responses.length})` : ''}</h3>
+      {responses?.length === 0 && <p className="text-sm text-text-muted">Пока никто не откликнулся</p>}
       <div className="flex flex-col gap-2">
         {responses?.map(({ response, profile: laborer }) => {
           const conv = conversationByLaborer.get(laborer.id)
           return (
-            <div key={response.id} className="p-3 bg-gray-900 border border-gray-800 rounded-xl">
+            <div key={response.id} className="p-3 bg-bg-card border border-border-1 rounded-xl">
               <div className="flex items-center gap-2.5 mb-1.5">
-                <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
-                  {laborer.photo_url ? <img src={laborer.photo_url} alt="" className="w-full h-full object-cover" /> : <User className="w-4 h-4 text-gray-600" />}
+                <div className="w-8 h-8 rounded-lg bg-border-1 flex items-center justify-center overflow-hidden shrink-0">
+                  {laborer.photo_url ? <img src={laborer.photo_url} alt="" className="w-full h-full object-cover" /> : <User className="w-4 h-4 text-text-muted" />}
                 </div>
-                <p className="font-medium text-white text-sm">{laborer.first_name} {laborer.last_name ?? ''}</p>
+                <p className="font-medium text-text-primary text-sm">{laborer.first_name} {laborer.last_name ?? ''}</p>
               </div>
-              {response.message && <p className="text-sm text-gray-400 mb-2">{response.message}</p>}
+              {response.message && <p className="text-sm text-text-secondary mb-2">{response.message}</p>}
 
               {conv ? (
                 <button
                   onClick={() => navigate(`/chats/${conv.id}`)}
-                  className="w-full py-1.5 rounded-lg bg-copper-500 hover:bg-copper-400 text-white text-xs font-medium transition-colors"
+                  className="w-full py-1.5 rounded-lg bg-copper-500 hover:bg-copper-hover text-white text-xs font-medium transition-colors"
                 >
                   Перейти в чат
                 </button>
@@ -165,12 +165,12 @@ function OwnerResponses({ taskId, taskStatus, customerId }: { taskId: string; ta
                     },
                   )}
                   disabled={accept.isPending}
-                  className="w-full py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium transition-colors disabled:opacity-50"
+                  className="w-full py-1.5 rounded-lg bg-border-1 hover:bg-border-2 text-text-primary text-xs font-medium transition-colors disabled:opacity-50"
                 >
                   Выбрать
                 </button>
               ) : (
-                <p className="text-xs text-gray-600">Задача закрыта</p>
+                <p className="text-xs text-text-muted">Задача закрыта</p>
               )}
             </div>
           )

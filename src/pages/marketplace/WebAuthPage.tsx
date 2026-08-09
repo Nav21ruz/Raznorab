@@ -80,7 +80,7 @@ export function WebAuthPage() {
   // уйдём на "/") — не мелькаем формой входа зря
   if (session === undefined || session) {
     return (
-      <div className="min-h-dvh bg-gray-950 flex items-center justify-center">
+      <div className="min-h-dvh bg-bg-page flex items-center justify-center">
         <Spinner />
       </div>
     )
@@ -88,19 +88,19 @@ export function WebAuthPage() {
 
   if (mode === 'forgot') {
     return (
-      <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
+      <div className="min-h-dvh bg-bg-page flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
           <div className="flex flex-col items-center gap-3 mb-8">
             <div className="w-14 h-14 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
               <Handshake className="w-7 h-7 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white">Briggo</h1>
+            <h1 className="text-2xl font-bold text-text-primary">Briggo</h1>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl">
+          <div className="bg-bg-card border border-border-1 rounded-2xl p-6 shadow-2xl">
             {forgotSent ? (
               <div className="text-center py-2">
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-text-secondary">
                   Если такой email зарегистрирован, на него отправлено письмо со ссылкой для восстановления пароля.
                   Проверьте почту (в том числе папку «Спам»).
                 </p>
@@ -110,12 +110,12 @@ export function WebAuthPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmitForgot(onSubmitForgot)} className="flex flex-col gap-4">
-                <p className="text-sm text-gray-400">Введите email, указанный при регистрации — пришлём ссылку для сброса пароля.</p>
+                <p className="text-sm text-text-secondary">Введите email, указанный при регистрации — пришлём ссылку для сброса пароля.</p>
                 <Input label="Email" type="email" autoComplete="email" placeholder="master@example.com" error={forgotErrors.email?.message} {...registerForgot('email')} />
                 <Button type="submit" loading={forgotSubmitting} className="w-full justify-center mt-2" size="lg">
                   Отправить ссылку
                 </Button>
-                <button type="button" onClick={() => setMode('login')} className="text-xs text-gray-500 hover:text-gray-300 text-center">
+                <button type="button" onClick={() => setMode('login')} className="text-xs text-text-muted hover:text-text-secondary text-center">
                   Вернуться ко входу
                 </button>
               </form>
@@ -127,36 +127,36 @@ export function WebAuthPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-bg-page flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <Link to="/" className="flex flex-col items-center gap-3 mb-8">
           <div className="w-14 h-14 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
             <Handshake className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Briggo</h1>
-          <p className="text-sm text-gray-500 text-center">Заказы на стройку и разовые подработки</p>
+          <h1 className="text-2xl font-bold text-text-primary">Briggo</h1>
+          <p className="text-sm text-text-muted text-center">Заказы на стройку и разовые подработки</p>
         </Link>
 
         {isMockBackend && (
-          <div className="flex items-start gap-2.5 p-3 mb-5 bg-copper-500/10 border border-copper-500/20 rounded-xl text-xs text-copper-300">
+          <div className="flex items-start gap-2.5 p-3 mb-5 bg-copper-500/10 border border-copper-500/20 rounded-xl text-xs text-copper-hover">
             <Info className="w-4 h-4 shrink-0 mt-0.5" />
             <span>Демо-режим: аккаунты хранятся только в этом браузере. Можно зарегистрировать любой email.</span>
           </div>
         )}
 
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl">
-          <div className="flex rounded-xl bg-gray-800 p-1 mb-6">
+        <div className="bg-bg-card border border-border-1 rounded-2xl p-6 shadow-2xl">
+          <div className="flex rounded-xl bg-border-1 p-1 mb-6">
             <button
               type="button"
               onClick={() => setMode('login')}
-              className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${mode === 'login' ? 'bg-gray-700 text-white shadow' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${mode === 'login' ? 'bg-copper-500 text-white shadow' : 'text-text-muted hover:text-text-secondary'}`}
             >
               Войти
             </button>
             <button
               type="button"
               onClick={() => setMode('register')}
-              className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${mode === 'register' ? 'bg-gray-700 text-white shadow' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-2 text-sm rounded-lg font-medium transition-all ${mode === 'register' ? 'bg-copper-500 text-white shadow' : 'text-text-muted hover:text-text-secondary'}`}
             >
               Регистрация
             </button>
@@ -173,18 +173,18 @@ export function WebAuthPage() {
               {...register('password')}
             />
             {mode === 'register' && (
-              <label className="flex items-start gap-2.5 text-xs text-gray-500 cursor-pointer select-none">
+              <label className="flex items-start gap-2.5 text-xs text-text-muted cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 shrink-0 rounded border-gray-700 bg-gray-800 accent-copper-500"
+                  className="mt-0.5 w-4 h-4 shrink-0 rounded border-border-2 bg-border-1 accent-copper-500"
                 />
                 <span>
                   Я принимаю{' '}
-                  <Link to="/terms" target="_blank" className="text-copper-400 hover:underline">Пользовательское соглашение</Link>
+                  <Link to="/terms" target="_blank" className="text-copper-hover hover:underline">Пользовательское соглашение</Link>
                   {' '}и{' '}
-                  <Link to="/privacy" target="_blank" className="text-copper-400 hover:underline">Политику конфиденциальности</Link>
+                  <Link to="/privacy" target="_blank" className="text-copper-hover hover:underline">Политику конфиденциальности</Link>
                 </span>
               </label>
             )}
@@ -196,7 +196,7 @@ export function WebAuthPage() {
               <button
                 type="button"
                 onClick={() => setMode('forgot')}
-                className="text-xs text-gray-500 hover:text-gray-300 text-center -mt-2"
+                className="text-xs text-text-muted hover:text-text-secondary text-center -mt-2"
               >
                 Забыли пароль?
               </button>
@@ -206,9 +206,9 @@ export function WebAuthPage() {
           {yandexLoginAvailable && (
             <>
               <div className="flex items-center gap-3 my-5">
-                <div className="h-px bg-gray-800 flex-1" />
-                <span className="text-xs text-gray-600">или</span>
-                <div className="h-px bg-gray-800 flex-1" />
+                <div className="h-px bg-border-1 flex-1" />
+                <span className="text-xs text-text-muted">или</span>
+                <div className="h-px bg-border-1 flex-1" />
               </div>
               <button
                 type="button"
@@ -218,20 +218,20 @@ export function WebAuthPage() {
                 <span className="w-5 h-5 rounded-full bg-[#fc3f1d] text-white flex items-center justify-center text-xs font-bold shrink-0">Я</span>
                 Войти через Яндекс
               </button>
-              <p className="text-xs text-gray-600 text-center mt-3">
+              <p className="text-xs text-text-muted text-center mt-3">
                 Продолжая, вы принимаете{' '}
-                <Link to="/terms" target="_blank" className="hover:text-gray-400 underline">условия</Link>
+                <Link to="/terms" target="_blank" className="hover:text-text-secondary underline">условия</Link>
                 {' '}и{' '}
-                <Link to="/privacy" target="_blank" className="hover:text-gray-400 underline">политику конфиденциальности</Link>
+                <Link to="/privacy" target="_blank" className="hover:text-text-secondary underline">политику конфиденциальности</Link>
               </p>
             </>
           )}
         </div>
 
-        <p className="text-xs text-gray-700 text-center mt-6">
-          <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
+        <p className="text-xs text-text-muted text-center mt-6">
+          <Link to="/terms" className="hover:text-text-muted">Пользовательское соглашение</Link>
           {' · '}
-          <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
+          <Link to="/privacy" className="hover:text-text-muted">Политика конфиденциальности</Link>
         </p>
       </div>
     </div>

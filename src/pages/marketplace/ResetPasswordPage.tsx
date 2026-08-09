@@ -38,33 +38,33 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-bg-page flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center gap-3 mb-8">
           <div className="w-14 h-14 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
             <Handshake className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Briggo</h1>
+          <h1 className="text-2xl font-bold text-text-primary">Briggo</h1>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl">
+        <div className="bg-bg-card border border-border-1 rounded-2xl p-6 shadow-2xl">
           {!token ? (
             <div className="text-center py-2">
-              <p className="text-sm text-red-400">Некорректная ссылка для сброса пароля.</p>
-              <button onClick={() => navigate('/', { replace: true })} className="text-sm text-copper-400 hover:underline mt-4">
+              <p className="text-sm text-error-text">Некорректная ссылка для сброса пароля.</p>
+              <button onClick={() => navigate('/', { replace: true })} className="text-sm text-copper-hover hover:underline mt-4">
                 Вернуться на главную
               </button>
             </div>
           ) : done ? (
             <div className="text-center py-2">
-              <p className="text-sm text-gray-300">Пароль изменён. Теперь можно войти с новым паролем.</p>
+              <p className="text-sm text-text-secondary">Пароль изменён. Теперь можно войти с новым паролем.</p>
               <Button type="button" onClick={() => navigate('/auth', { replace: true })} className="w-full justify-center mt-5">
                 Войти
               </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-              <p className="text-sm text-gray-400">Придумайте новый пароль.</p>
+              <p className="text-sm text-text-secondary">Придумайте новый пароль.</p>
               <Input label="Новый пароль" type="password" autoComplete="new-password" placeholder="••••••" error={errors.password?.message} {...register('password')} />
               <Input label="Повторите пароль" type="password" autoComplete="new-password" placeholder="••••••" error={errors.confirm?.message} {...register('confirm')} />
               <Button type="submit" loading={isSubmitting} className="w-full justify-center mt-2" size="lg">

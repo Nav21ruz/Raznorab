@@ -40,19 +40,19 @@ export function LaborFeedPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Задачи рядом</h1>
-        <p className="text-sm text-gray-500 mt-1">Разовые подработки от заказчиков</p>
+        <h1 className="text-2xl font-bold text-text-primary">Задачи рядом</h1>
+        <p className="text-sm text-text-muted mt-1">Разовые подработки от заказчиков</p>
       </div>
 
       <FilterPanel activeCount={activeCount} onReset={resetFilters}>
         <Input label="Город" placeholder="Например, Москва" value={city} onChange={(e) => setCity(e.target.value)} />
         <Input label="Поиск по названию/описанию" placeholder="Например, разгрузка" value={search} onChange={(e) => setSearch(e.target.value)} />
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">Тип оплаты</label>
+          <label className="text-sm font-medium text-text-secondary">Тип оплаты</label>
           <select
             value={payType}
             onChange={(e) => setPayType(e.target.value as PayType | '')}
-            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
+            className="px-3 py-2.5 bg-bg-page border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
           >
             <option value="">Любой</option>
             {(Object.keys(PAY_TYPE_LABELS) as PayType[]).map((t) => <option key={t} value={t}>{PAY_TYPE_LABELS[t]}</option>)}
@@ -65,11 +65,11 @@ export function LaborFeedPage() {
 
       {!isLoading && tasks?.length === 0 && (
         <div className="text-center py-24">
-          <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Wrench className="w-8 h-8 text-gray-700" />
+          <div className="w-16 h-16 bg-bg-card border border-border-1 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Wrench className="w-8 h-8 text-text-muted" />
           </div>
-          <p className="text-gray-400 font-medium">{activeCount > 0 ? 'По этим фильтрам задач не нашлось' : 'Пока нет задач'}</p>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-text-secondary font-medium">{activeCount > 0 ? 'По этим фильтрам задач не нашлось' : 'Пока нет задач'}</p>
+          <p className="text-sm text-text-muted mt-1">
             {activeCount > 0 ? 'Попробуйте изменить или сбросить фильтры' : 'Загляните позже — заказчики публикуют новые задачи каждый день'}
           </p>
         </div>
@@ -80,13 +80,13 @@ export function LaborFeedPage() {
           <button
             key={task.id}
             onClick={() => navigate(`/labor/${task.id}`)}
-            className="p-4 bg-gray-900 border border-gray-800 rounded-2xl hover:border-gray-700 active:scale-[0.99] transition-all text-left"
+            className="p-4 bg-bg-card border border-border-1 rounded-2xl hover:border-border-2 active:scale-[0.99] transition-all text-left"
           >
-            <h3 className="font-semibold text-white mb-1.5">{task.title}</h3>
-            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{task.description}</p>
-            <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+            <h3 className="font-semibold text-text-primary mb-1.5">{task.title}</h3>
+            <p className="text-sm text-text-secondary line-clamp-2 mb-3">{task.description}</p>
+            <div className="flex flex-wrap gap-3 text-xs text-text-muted">
               {task.pay_amount && (
-                <span className="flex items-center gap-1 text-copper-400 font-medium">
+                <span className="flex items-center gap-1 text-copper-hover font-medium">
                   <Wallet className="w-3.5 h-3.5" /> {task.pay_amount.toLocaleString('ru-RU')} ₽ {PAY_TYPE_LABELS[task.pay_type]}
                 </span>
               )}

@@ -18,17 +18,17 @@ export function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-6">Дашборд</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-6">Дашборд</h1>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {cards.map(({ label, value, icon: Icon, to, highlight }) => (
           <Link
             key={label}
             to={to}
-            className={`p-4 rounded-2xl border flex flex-col gap-2 transition-colors ${highlight ? 'bg-copper-500/10 border-copper-500/30 hover:bg-copper-500/15' : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}
+            className={`p-4 rounded-2xl border flex flex-col gap-2 transition-colors ${highlight ? 'bg-copper-500/10 border-copper-500/30 hover:bg-copper-500/15' : 'bg-bg-card border-border-1 hover:border-border-2'}`}
           >
-            <Icon className={`w-5 h-5 ${highlight ? 'text-copper-400' : 'text-gray-500'}`} />
-            <span className="text-2xl font-bold text-white">{value}</span>
-            <span className="text-xs text-gray-500">{label}</span>
+            <Icon className={`w-5 h-5 ${highlight ? 'text-copper-hover' : 'text-text-muted'}`} />
+            <span className="text-2xl font-bold text-text-primary">{value}</span>
+            <span className="text-xs text-text-muted">{label}</span>
           </Link>
         ))}
       </div>

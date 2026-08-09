@@ -13,7 +13,7 @@ export function MarketplaceShell({ nav = true }: { nav?: boolean }) {
 
   if (isLoading || banLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-page flex items-center justify-center">
         <Spinner />
       </div>
     )
@@ -21,21 +21,21 @@ export function MarketplaceShell({ nav = true }: { nav?: boolean }) {
 
   if (isError || !profile) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-6">
-        <p className="text-sm text-gray-500 text-center">Не удалось загрузить профиль. Проверьте подключение и обновите страницу.</p>
+      <div className="min-h-screen bg-bg-page flex items-center justify-center px-6">
+        <p className="text-sm text-text-muted text-center">Не удалось загрузить профиль. Проверьте подключение и обновите страницу.</p>
       </div>
     )
   }
 
   if (ban) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-bg-page flex items-center justify-center px-6">
         <div className="text-center max-w-xs">
-          <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <ShieldOff className="w-8 h-8 text-red-400" />
+          <div className="w-16 h-16 bg-error-bg border border-error-text/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <ShieldOff className="w-8 h-8 text-error-text" />
           </div>
-          <p className="text-white font-semibold mb-1">Доступ ограничен</p>
-          <p className="text-sm text-gray-500">Ваш аккаунт заблокирован администратором{ban.reason ? `: ${ban.reason}` : '.'}</p>
+          <p className="text-text-primary font-semibold mb-1">Доступ ограничен</p>
+          <p className="text-sm text-text-muted">Ваш аккаунт заблокирован администратором{ban.reason ? `: ${ban.reason}` : '.'}</p>
         </div>
       </div>
     )
@@ -46,7 +46,7 @@ export function MarketplaceShell({ nav = true }: { nav?: boolean }) {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-950 ${nav ? 'pb-24' : ''}`}>
+    <div className={`min-h-screen bg-bg-page ${nav ? 'pb-24' : ''}`}>
       <Outlet context={{ profile }} />
       {nav && <BottomNav role={profile.role} counts={notifications} />}
     </div>

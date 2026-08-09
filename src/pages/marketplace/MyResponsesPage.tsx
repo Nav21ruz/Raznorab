@@ -16,8 +16,8 @@ export function MyResponsesPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Мои отклики</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-text-primary">Мои отклики</h1>
+        <p className="text-sm text-text-muted mt-1">
           {responses?.length ? `${responses.length} отклик(ов)` : 'Здесь появятся заказы, на которые вы откликнулись'}
         </p>
       </div>
@@ -26,11 +26,11 @@ export function MyResponsesPage() {
 
       {!isLoading && responses?.length === 0 && (
         <div className="text-center py-24">
-          <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Inbox className="w-8 h-8 text-gray-700" />
+          <div className="w-16 h-16 bg-bg-card border border-border-1 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Inbox className="w-8 h-8 text-text-muted" />
           </div>
-          <p className="text-gray-400 font-medium">Пока нет откликов</p>
-          <p className="text-sm text-gray-600 mt-1">Свайпайте заказы в ленте, чтобы откликнуться</p>
+          <p className="text-text-secondary font-medium">Пока нет откликов</p>
+          <p className="text-sm text-text-muted mt-1">Свайпайте заказы в ленте, чтобы откликнуться</p>
         </div>
       )}
 
@@ -39,12 +39,12 @@ export function MyResponsesPage() {
           const match = matchByOrderId.get(order.id)
           const rejected = !match && swipe.reviewed_by_customer
           return (
-            <div key={order.id} className="p-4 bg-gray-900 border border-gray-800 rounded-2xl">
+            <div key={order.id} className="p-4 bg-bg-card border border-border-1 rounded-2xl">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <span className="inline-block px-2 py-0.5 rounded-md bg-gray-800 text-xs text-gray-400 mb-1.5">{order.category}</span>
-                  <h3 className="font-semibold text-white truncate">{order.title}</h3>
-                  <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-1.5">
+                  <span className="inline-block px-2 py-0.5 rounded-md bg-border-1 text-xs text-text-secondary mb-1.5">{order.category}</span>
+                  <h3 className="font-semibold text-text-primary truncate">{order.title}</h3>
+                  <div className="flex flex-wrap gap-3 text-xs text-text-muted mt-1.5">
                     {(order.budget_from || order.budget_to) && (
                       <span className="flex items-center gap-1"><Wallet className="w-3 h-3" />
                         {order.budget_from && order.budget_to ? `${order.budget_from}–${order.budget_to} ₽` : `${order.budget_from ?? order.budget_to} ₽`}
@@ -55,20 +55,20 @@ export function MyResponsesPage() {
                 </div>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-800">
+              <div className="mt-3 pt-3 border-t border-border-1">
                 {match ? (
                   <button
                     onClick={() => navigate(`/chats/${match.id}`)}
-                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-copper-500 hover:bg-copper-400 text-white text-sm font-medium transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-copper-500 hover:bg-copper-hover text-white text-sm font-medium transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" /> Мэтч! Перейти в чат
                   </button>
                 ) : rejected ? (
-                  <p className="flex items-center justify-center gap-1.5 text-xs text-gray-600 py-2">
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-text-muted py-2">
                     <XCircle className="w-3.5 h-3.5" /> Заказчик выбрал другого исполнителя
                   </p>
                 ) : (
-                  <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500 py-2">
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-text-muted py-2">
                     <Clock className="w-3.5 h-3.5" /> Ожидаем ответа заказчика
                   </p>
                 )}

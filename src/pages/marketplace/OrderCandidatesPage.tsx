@@ -37,12 +37,12 @@ export function OrderCandidatesPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => navigate('/orders')} className="p-2 -ml-2 text-gray-500 hover:text-gray-300">
+        <button onClick={() => navigate('/orders')} className="p-2 -ml-2 text-text-muted hover:text-text-secondary">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-xl font-bold text-white">Отклики</h1>
-          {order && <p className="text-sm text-gray-500">{order.title}</p>}
+          <h1 className="text-xl font-bold text-text-primary">Отклики</h1>
+          {order && <p className="text-sm text-text-muted">{order.title}</p>}
         </div>
       </div>
 
@@ -56,11 +56,11 @@ export function OrderCandidatesPage() {
           onDecide={handleDecide}
           emptyState={
             <div className="text-center py-24">
-              <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Users2 className="w-8 h-8 text-gray-700" />
+              <div className="w-16 h-16 bg-bg-card border border-border-1 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users2 className="w-8 h-8 text-text-muted" />
               </div>
-              <p className="text-gray-400 font-medium">Пока нет откликов</p>
-              <p className="text-sm text-gray-600 mt-1">Как только строитель откликнётся на заказ, вы увидите его здесь</p>
+              <p className="text-text-secondary font-medium">Пока нет откликов</p>
+              <p className="text-sm text-text-muted mt-1">Как только строитель откликнётся на заказ, вы увидите его здесь</p>
             </div>
           }
         />

@@ -19,18 +19,18 @@ export function LandingPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-dvh bg-gray-950">
+    <div className="min-h-dvh bg-bg-page">
       <div className="max-w-lg mx-auto px-4 pt-10 pb-16">
         <div className="flex flex-col items-center gap-3 mb-8 text-center">
           <div className="w-16 h-16 bg-copper-500 rounded-2xl flex items-center justify-center shadow-lg shadow-copper-500/30">
             <Handshake className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white">Briggo</h1>
-          <p className="text-gray-400">Заказы на стройку и разовые подработки — заказчики и исполнители находят друг друга здесь</p>
+          <h1 className="text-3xl font-bold text-text-primary">Briggo</h1>
+          <p className="text-text-secondary">Заказы на стройку и разовые подработки — заказчики и исполнители находят друг друга здесь</p>
         </div>
 
         {isMockBackend && (
-          <p className="text-center text-xs text-copper-300 bg-copper-500/10 border border-copper-500/20 rounded-xl px-3 py-2 mb-6">
+          <p className="text-center text-xs text-copper-hover bg-copper-500/10 border border-copper-500/20 rounded-xl px-3 py-2 mb-6">
             Демо-режим: можно попробовать сайт без настоящей регистрации
           </p>
         )}
@@ -41,7 +41,7 @@ export function LandingPage() {
           </Button>
           <button
             onClick={() => navigate('/auth', { state: { mode: 'login' } })}
-            className="text-sm text-gray-500 hover:text-gray-300 text-center"
+            className="text-sm text-text-muted hover:text-text-secondary text-center"
           >
             Уже есть аккаунт? Войти
           </button>
@@ -49,35 +49,35 @@ export function LandingPage() {
 
         <div className="grid grid-cols-3 gap-2 mb-10">
           {AUDIENCES.map(({ icon: Icon, title, description }) => (
-            <div key={title} className="p-3 bg-gray-900 border border-gray-800 rounded-2xl text-center">
-              <div className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center mx-auto mb-2.5">
-                <Icon className="w-5 h-5 text-copper-400" />
+            <div key={title} className="p-3 bg-bg-card border border-border-1 rounded-2xl text-center">
+              <div className="w-10 h-10 bg-border-1 rounded-xl flex items-center justify-center mx-auto mb-2.5">
+                <Icon className="w-5 h-5 text-copper-hover" />
               </div>
-              <p className="font-semibold text-white text-sm mb-1">{title}</p>
-              <p className="text-xs text-gray-500 leading-snug">{description}</p>
+              <p className="font-semibold text-text-primary text-sm mb-1">{title}</p>
+              <p className="text-xs text-text-muted leading-snug">{description}</p>
             </div>
           ))}
         </div>
 
         <div className="flex flex-col gap-5">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide text-center">Как это работает</h2>
+          <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wide text-center">Как это работает</h2>
           {STEPS.map(({ icon: Icon, title, description }, i) => (
             <div key={title} className="flex items-start gap-3.5">
-              <div className="w-9 h-9 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-copper-400" />
+              <div className="w-9 h-9 rounded-xl bg-bg-card border border-border-1 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-copper-hover" />
               </div>
               <div className="min-w-0 pt-1">
-                <p className="font-medium text-white text-sm">{i + 1}. {title}</p>
-                <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+                <p className="font-medium text-text-primary text-sm">{i + 1}. {title}</p>
+                <p className="text-sm text-text-muted mt-0.5">{description}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <p className="text-xs text-gray-700 text-center mt-12">
-          <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
+        <p className="text-xs text-text-muted text-center mt-12">
+          <Link to="/terms" className="hover:text-text-muted">Пользовательское соглашение</Link>
           {' · '}
-          <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
+          <Link to="/privacy" className="hover:text-text-muted">Политика конфиденциальности</Link>
         </p>
       </div>
     </div>

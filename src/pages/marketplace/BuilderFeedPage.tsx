@@ -60,17 +60,17 @@ export function BuilderFeedPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Лента заказов</h1>
-        <p className="text-sm text-gray-500 mt-1">Свайп вправо — откликнуться, влево — пропустить</p>
+        <h1 className="text-2xl font-bold text-text-primary">Лента заказов</h1>
+        <p className="text-sm text-text-muted mt-1">Свайп вправо — откликнуться, влево — пропустить</p>
       </div>
 
       <FilterPanel activeCount={activeCount} onReset={resetFilters}>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">Категория</label>
+          <label className="text-sm font-medium text-text-secondary">Категория</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
+            className="px-3 py-2.5 bg-bg-page border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
           >
             <option value="">Любая категория</option>
             {BUILDER_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -94,11 +94,11 @@ export function BuilderFeedPage() {
           onDecide={handleDecide}
           emptyState={
             <div className="text-center py-24">
-              <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <HardHat className="w-8 h-8 text-gray-700" />
+              <div className="w-16 h-16 bg-bg-card border border-border-1 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <HardHat className="w-8 h-8 text-text-muted" />
               </div>
-              <p className="text-gray-400 font-medium">{activeCount > 0 ? 'По этим фильтрам заказов не нашлось' : 'Новых заказов пока нет'}</p>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-text-secondary font-medium">{activeCount > 0 ? 'По этим фильтрам заказов не нашлось' : 'Новых заказов пока нет'}</p>
+              <p className="text-sm text-text-muted mt-1">
                 {activeCount > 0 ? 'Попробуйте изменить или сбросить фильтры' : 'Загляните позже — заказчики публикуют новые задачи каждый день'}
               </p>
             </div>

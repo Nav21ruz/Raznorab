@@ -17,11 +17,11 @@ export function OrderCard({ order }: { order: Order }) {
 
   return (
     <CardShell>
-      <div className="relative h-56 bg-gray-800 flex items-center justify-center shrink-0">
+      <div className="relative h-56 bg-border-1 flex items-center justify-center shrink-0">
         {photo ? (
           <img src={photo} alt="" className="w-full h-full object-cover" />
         ) : (
-          <ImageOff className="w-10 h-10 text-gray-700" />
+          <ImageOff className="w-10 h-10 text-text-muted" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent" />
         <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-copper-500 text-white text-xs font-semibold">
@@ -31,7 +31,7 @@ export function OrderCard({ order }: { order: Order }) {
           type="button"
           onPointerDownCapture={(e) => e.stopPropagation()}
           onClick={(e) => { e.stopPropagation(); setShowReport(true) }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-gray-950/60 backdrop-blur-sm flex items-center justify-center text-gray-300 hover:text-red-400 transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-bg-page/60 backdrop-blur-sm flex items-center justify-center text-text-secondary hover:text-error-text transition-colors"
           aria-label="Пожаловаться на заказ"
         >
           <Flag className="w-4 h-4" />
@@ -39,25 +39,25 @@ export function OrderCard({ order }: { order: Order }) {
       </div>
 
       <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
-        <h3 className="text-lg font-bold text-white leading-snug">{order.title}</h3>
+        <h3 className="text-lg font-bold text-text-primary leading-snug">{order.title}</h3>
 
-        <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+        <div className="flex flex-wrap gap-3 text-sm text-text-secondary">
           <span className="flex items-center gap-1.5">
-            <Wallet className="w-3.5 h-3.5 text-copper-400" />
+            <Wallet className="w-3.5 h-3.5 text-copper-hover" />
             {formatBudget(order)}
           </span>
           {order.city && (
             <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-copper-400" />
+              <MapPin className="w-3.5 h-3.5 text-copper-hover" />
               {order.city}{order.address ? `, ${order.address}` : ''}
             </span>
           )}
         </div>
 
-        <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{order.description}</p>
+        <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">{order.description}</p>
       </div>
 
-      <div className="px-5 py-3 border-t border-gray-800 flex items-center gap-2 text-xs text-gray-500 shrink-0">
+      <div className="px-5 py-3 border-t border-border-1 flex items-center gap-2 text-xs text-text-muted shrink-0">
         <HardHat className="w-3.5 h-3.5" />
         Заказ от частного заказчика
       </div>

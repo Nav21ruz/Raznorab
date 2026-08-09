@@ -11,10 +11,10 @@ import { useLaborTask } from '../../hooks/useLabor'
 import { REPORT_STATUS_LABELS, REPORT_TARGET_LABELS, type Report, type ReportStatus } from '../../types/marketplace'
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
-  pending: 'bg-copper-500/15 text-copper-400',
+  pending: 'bg-copper-500/15 text-copper-hover',
   reviewed: 'bg-blue-500/15 text-blue-400',
-  dismissed: 'bg-gray-700/50 text-gray-400',
-  actioned: 'bg-red-500/15 text-red-400',
+  dismissed: 'bg-border-2/50 text-text-secondary',
+  actioned: 'bg-error-bg text-error-text',
 }
 
 const FILTERS: { value: ReportStatus | 'all'; label: string }[] = [
@@ -33,14 +33,14 @@ export function AdminReportsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-4">Жалобы</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-4">Жалобы</h1>
 
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
         {FILTERS.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => setFilter(value)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filter === value ? 'bg-copper-500 text-white' : 'bg-gray-900 border border-gray-800 text-gray-400 hover:border-gray-700'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filter === value ? 'bg-copper-500 text-white' : 'bg-bg-card border border-border-1 text-text-secondary hover:border-border-2'}`}
           >
             {label}
           </button>
@@ -51,10 +51,10 @@ export function AdminReportsPage() {
 
       {!isLoading && filtered.length === 0 && (
         <div className="text-center py-24">
-          <div className="w-16 h-16 bg-gray-900 border border-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Flag className="w-8 h-8 text-gray-700" />
+          <div className="w-16 h-16 bg-bg-card border border-border-1 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Flag className="w-8 h-8 text-text-muted" />
           </div>
-          <p className="text-gray-400 font-medium">Нет жалоб в этой категории</p>
+          <p className="text-text-secondary font-medium">Нет жалоб в этой категории</p>
         </div>
       )}
 
@@ -96,16 +96,16 @@ function ReportRow({ report }: { report: Report }) {
   }
 
   return (
-    <div className="p-4 bg-gray-900 border border-gray-800 rounded-2xl">
+    <div className="p-4 bg-bg-card border border-border-1 rounded-2xl">
       <div className="flex items-center justify-between mb-2">
-        <span className="px-2 py-0.5 rounded-md bg-gray-800 text-xs text-gray-400">{REPORT_TARGET_LABELS[report.target_type]}</span>
+        <span className="px-2 py-0.5 rounded-md bg-border-1 text-xs text-text-secondary">{REPORT_TARGET_LABELS[report.target_type]}</span>
         <span className={`px-2 py-1 rounded-lg text-xs font-medium ${STATUS_COLORS[report.status]}`}>{REPORT_STATUS_LABELS[report.status]}</span>
       </div>
 
-      <p className="font-semibold text-white mb-1">{targetLabel ?? '…'}</p>
-      <p className="text-sm text-copper-400 mb-1">{report.reason}</p>
-      {report.comment && <p className="text-sm text-gray-400 mb-2">{report.comment}</p>}
-      <p className="text-xs text-gray-600 mb-3">
+      <p className="font-semibold text-text-primary mb-1">{targetLabel ?? '…'}</p>
+      <p className="text-sm text-copper-hover mb-1">{report.reason}</p>
+      {report.comment && <p className="text-sm text-text-secondary mb-2">{report.comment}</p>}
+      <p className="text-xs text-text-muted mb-3">
         От: {reporter ? `${reporter.first_name} ${reporter.last_name ?? ''}`.trim() : '…'}
         {' · '}
         {formatDistanceToNow(new Date(report.created_at), { addSuffix: true, locale: ru })}
@@ -121,7 +121,7 @@ function ReportRow({ report }: { report: Report }) {
           </button>
           <button
             onClick={() => updateStatus.mutate({ id: report.id, status: 'dismissed' })}
-            className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-border-1 hover:bg-border-2 text-text-secondary text-xs font-medium transition-colors"
           >
             Отклонить
           </button>
@@ -129,7 +129,7 @@ function ReportRow({ report }: { report: Report }) {
             <button
               onClick={handleBan}
               disabled={banUser.isPending}
-              className="px-3 py-1.5 rounded-lg bg-red-600/15 hover:bg-red-600/25 text-red-400 text-xs font-medium transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-error-bg hover:opacity-80 text-error-text text-xs font-medium transition-colors disabled:opacity-50"
             >
               Забанить автора
             </button>

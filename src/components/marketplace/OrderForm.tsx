@@ -57,29 +57,29 @@ export function OrderForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-400">Категория</label>
+        <label className="text-sm font-medium text-text-secondary">Категория</label>
         <select
           {...register('category')}
           defaultValue=""
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
+          className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30"
         >
           <option value="" disabled>Выберите категорию</option>
           {BUILDER_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
-        {errors.category && <p className="text-xs text-red-400">{errors.category.message}</p>}
+        {errors.category && <p className="text-xs text-error-text">{errors.category.message}</p>}
       </div>
 
       <Input label="Название заказа" placeholder="Укладка плитки в ванной" error={errors.title?.message} {...register('title')} />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-400">Описание</label>
+        <label className="text-sm font-medium text-text-secondary">Описание</label>
         <textarea
           {...register('description')}
           rows={4}
-          className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
+          className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-text-muted transition-all"
           placeholder="Опишите объём работ, сроки, материалы"
         />
-        {errors.description && <p className="text-xs text-red-400">{errors.description.message}</p>}
+        {errors.description && <p className="text-xs text-error-text">{errors.description.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-3">

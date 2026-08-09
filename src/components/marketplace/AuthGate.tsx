@@ -25,7 +25,7 @@ export function AuthGate() {
 
   if (session === undefined) {
     return (
-      <div className="min-h-dvh bg-gray-950 flex items-center justify-center">
+      <div className="min-h-dvh bg-bg-page flex items-center justify-center">
         <Spinner />
       </div>
     )

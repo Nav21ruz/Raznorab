@@ -4,18 +4,25 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { HardHat, Users, Wrench, Info, LogOut } from 'lucide-react'
+import { HardHat, Users, Wrench, Info, LogOut, Sun, Moon, MonitorSmartphone } from 'lucide-react'
 import { Input } from '../../components/shared/Input'
 import { Button } from '../../components/shared/Button'
 import { Modal } from '../../components/shared/Modal'
 import { PhotoPicker } from '../../components/marketplace/PhotoPicker'
 import { useBuilderProfile, useUpdateProfile, useUpsertBuilderProfile } from '../../hooks/useProfile'
 import { useBannedWords } from '../../hooks/useModeration'
+import { useBriggoTheme } from '../../hooks/useBriggoTheme'
 import { containsProfanity, maskProfanity } from '../../lib/profanity'
 import { api, isMockBackend } from '../../lib/api'
 import { BUILDER_CATEGORIES, ROLE_LABELS, type BuilderProfile, type Profile, type Role } from '../../types/marketplace'
 
 const ROLE_ICONS: Record<Role, typeof Users> = { customer: Users, builder: HardHat, laborer: Wrench }
+
+const THEME_OPTIONS = [
+  { value: 'light' as const, label: 'Светлая', icon: Sun },
+  { value: 'dark' as const, label: 'Тёмная', icon: Moon },
+  { value: 'system' as const, label: 'Как в системе', icon: MonitorSmartphone },
+]
 
 const schema = z.object({
   first_name: z.string().min(1, 'Введите имя'),
@@ -28,6 +35,7 @@ type FormData = z.infer<typeof schema>
 export function ProfilePage() {
   const { profile } = useOutletContext<{ profile: Profile }>()
   const updateProfile = useUpdateProfile()
+  const { theme, setTheme } = useBriggoTheme()
   // Роль определяет, какие разделы видны в нижнем меню и как вас видят другие
   // участники — переключение в один клик слишком легко нажать случайно,
   // поэтому спрашиваем подтверждение, прежде чем менять.
@@ -62,17 +70,17 @@ export function ProfilePage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
-      <h1 className="text-2xl font-bold text-white mb-6">Профиль</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-6">Профиль</h1>
 
       {isMockBackend && (
-        <div className="flex items-start gap-2.5 p-3 mb-6 bg-copper-500/10 border border-copper-500/20 rounded-xl text-xs text-copper-300">
+        <div className="flex items-start gap-2.5 p-3 mb-6 bg-copper-500/10 border border-copper-500/20 rounded-xl text-xs text-copper-hover">
           <Info className="w-4 h-4 shrink-0 mt-0.5" />
           <span>Демо-режим: данные хранятся только в этом браузере. Укажите VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY, чтобы подключить реальный Supabase.</span>
         </div>
       )}
 
       <div className="mb-6">
-        <label className="text-sm font-medium text-gray-400 mb-2 block">Роль</label>
+        <label className="text-sm font-medium text-text-secondary mb-2 block">Роль</label>
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(ROLE_LABELS) as Role[]).map((r) => {
             const Icon = ROLE_ICONS[r]
@@ -81,10 +89,29 @@ export function ProfilePage() {
               <button
                 key={r}
                 onClick={() => { if (!active) setPendingRole(r) }}
-                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700'}`}
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-copper-500 border-copper-500 text-white' : 'bg-bg-card border-border-1 text-text-secondary hover:border-border-2'}`}
               >
                 <Icon className="w-5 h-5" />
                 {ROLE_LABELS[r]}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <label className="text-sm font-medium text-text-secondary mb-2 block">Тема оформления</label>
+        <div className="grid grid-cols-3 gap-2">
+          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => {
+            const active = theme === value
+            return (
+              <button
+                key={value}
+                onClick={() => setTheme(value)}
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all ${active ? 'bg-copper-500 border-copper-500 text-white' : 'bg-bg-card border-border-1 text-text-secondary hover:border-border-2'}`}
+              >
+                <Icon className="w-5 h-5" />
+                {label}
               </button>
             )
           })}
@@ -102,21 +129,21 @@ export function ProfilePage() {
 
       <button
         onClick={() => api.auth.logout()}
-        className="w-full mt-8 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors"
+        className="w-full mt-8 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-bg-card border border-border-1 text-text-secondary hover:text-error-text hover:border-error-text/30 text-sm font-medium transition-colors"
       >
         <LogOut className="w-4 h-4" /> Выйти из аккаунта
       </button>
 
-      <p className="text-xs text-gray-700 text-center mt-6">
-        <Link to="/terms" className="hover:text-gray-500">Пользовательское соглашение</Link>
+      <p className="text-xs text-text-muted text-center mt-6">
+        <Link to="/terms" className="hover:text-text-muted">Пользовательское соглашение</Link>
         {' · '}
-        <Link to="/privacy" className="hover:text-gray-500">Политика конфиденциальности</Link>
+        <Link to="/privacy" className="hover:text-text-muted">Политика конфиденциальности</Link>
       </p>
 
       <Modal open={pendingRole !== null} onClose={() => setPendingRole(null)} title="Сменить роль?">
         {pendingRole && (
           <div className="flex flex-col gap-4">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-text-secondary">
               Роль станет «{ROLE_LABELS[pendingRole]}» — изменится набор разделов в нижнем меню и то, в каком виде вас видят другие
               пользователи. Уже собранные данные (например, анкета строителя) не удаляются — если вернётесь к прежней роли, всё будет на месте.
             </p>
@@ -189,17 +216,17 @@ function BuilderProfileForm({ builderProfile }: { builderProfile: BuilderProfile
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-white mb-4">Профиль строителя</h2>
+      <h2 className="text-lg font-bold text-text-primary mb-4">Профиль строителя</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">Специализация</label>
+          <label className="text-sm font-medium text-text-secondary">Специализация</label>
           <div className="flex flex-wrap gap-2">
             {BUILDER_CATEGORIES.map((cat) => (
               <button
                 type="button"
                 key={cat}
                 onClick={() => setSpecialties((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat])}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-copper-500 border-copper-500 text-white' : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${specialties.includes(cat) ? 'bg-copper-500 border-copper-500 text-white' : 'bg-bg-card border-border-2 text-text-secondary hover:border-copper-500/40'}`}
               >
                 {cat}
               </button>
@@ -215,11 +242,11 @@ function BuilderProfileForm({ builderProfile }: { builderProfile: BuilderProfile
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-400">О себе</label>
+          <label className="text-sm font-medium text-text-secondary">О себе</label>
           <textarea
             {...register('about')}
             rows={3}
-            className="px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-100 outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-gray-600 transition-all"
+            className="px-3 py-2.5 bg-bg-card border border-border-2 rounded-xl text-sm text-text-primary outline-none focus:border-copper-500 focus:ring-1 focus:ring-copper-500/30 resize-none placeholder:text-text-muted transition-all"
             placeholder="Расскажите о своём опыте и подходе к работе"
           />
         </div>

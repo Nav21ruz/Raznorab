@@ -27,11 +27,11 @@ export function YandexCallbackPage() {
   }, [params, navigate])
 
   return (
-    <div className="min-h-dvh bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-bg-page flex items-center justify-center p-4">
       {error ? (
         <div className="max-w-xs text-center">
-          <p className="text-sm text-red-400 mb-4">{error}</p>
-          <button onClick={() => navigate('/', { replace: true })} className="text-sm text-copper-400 hover:underline">
+          <p className="text-sm text-error-text mb-4">{error}</p>
+          <button onClick={() => navigate('/', { replace: true })} className="text-sm text-copper-hover hover:underline">
             Вернуться на главную
           </button>
         </div>
